@@ -1,5 +1,7 @@
 .idea
 .vscode
+*.dot
+*.pstats
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
