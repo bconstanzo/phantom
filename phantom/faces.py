@@ -76,7 +76,31 @@ class Shape:
         using numbers.
         """
         pass
+
+
+class Shape5p(Shape):
+    """
+    5-point facial landmarks Shape object.
+    """
+    model = shape_predictor_5p
+
+    def _make_dict(self):
+        p = self.points
+        self.dict = {
+            "eye_left":   p[0:2],
+            "eye_right":  p[2:4],
+            "nose":      [p[4]],
+        }
     
+    def _draw_lines(self, img, color, thick):
+        d = self.dict
+        points = d["eye_left"] + d["nose"] + d["eye_right"][::-1]
+        pairs = list(zip(points[:-1], points[1:]))
+        print(pairs)
+        for point1, point2 in pairs:
+            cv2.line(img, point1, point2, color, thickness=thick)
+        return None
+
 
 class Shape68p(Shape):
     """
