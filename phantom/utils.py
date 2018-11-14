@@ -90,14 +90,15 @@ def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=T
     else:
         img_ = img
     if mode == "line":
-        draw = _draw_face_line
+        mode = "_draw_lines"
     elif mode == "points":
-        draw = _draw_face_points
+        draw = "_draw_points"
     elif mode == "numbers":
-        draw = _draw_face_numbers
+        draw = "_draw_numbers"
     else:
         raise ValueError("Invalid value for `mode` parameter.")
     for face in faces:
+        draw = getattr(face, draw)
         draw(img_, face.dict, color=color, thick=thick)
     return img_
 

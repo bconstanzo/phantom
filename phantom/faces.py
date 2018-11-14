@@ -41,6 +41,8 @@ class Shape:
 
     :param points: ordered list of points, according to a landmark definition.
     """
+    model = None  # subclasses override this
+
     def __init__(self, points):
         self.points = points
         self.dict = {}
@@ -51,12 +53,35 @@ class Shape:
         Each subclass has to define this method to populate `self.dict`.
         """
         pass
+
+    def _draw_lines(self, img, color, thick):
+        """
+        Subclasses must define the logic for drawing this shape over an image,
+        using lines.
+        """
+        pass
+    
+    def _draw_points(self, img, color, thick):
+        """
+        Subclasses must define the logic for drawing this shape over an image,
+        using points.
+        """
+        pass
+    
+    def _draw_numbers(self, img, color, thick):
+        """
+        Subclasses must define the logic for drawing this shape over an image,
+        using numbers.
+        """
+        pass
     
 
 class Shape68p(Shape):
     """
     68-point facial landmarks Shape object.
     """
+    model = shape_predictor_68p
+
     def _make_dict(self):
         p = self.points
         self.dict = {
@@ -118,7 +143,7 @@ def detect(img, upsample=1):
     return [_rect_to_tuple(r) for r in face_detector(img, upsample)]
 
 
-def landmark(img, *, locations=None, model=shape_predictor_68p, upsample=1):
+def landmark(img, *, locations=None, model=Shape68p, upsample=1):
     """
     Detects the facial landmarks of each face present in an image.
 
@@ -127,14 +152,18 @@ def landmark(img, *, locations=None, model=shape_predictor_68p, upsample=1):
     :param img: numpy/cv2 image array
     :param locations: list of tuples (left, top, right, bottom) with face 
         locations
-    :param upsample: TODO
+    :param model: `Shape` subclass that defines a landmarking model.
+    :param upsample: number of upsamples to use when locating faces (only used
+        if `locations` is None)
     :return: list of `phantom.faces.Shape` objects, each describing the position
         and landmarks of every face
     """
     if locations is None:
         locations = detect(img, upsample)
+    class_ = model
+    model = class_.model  # TODO: might want to improve the names here
     shapelist = [model(img, _tuple_to_rect(loc)) for loc in locations]
-    return [Shape68p([(p.x, p.y) for p in face.parts()]) for face in shapelist]
+    return [class_([(p.x, p.y) for p in face.parts()]) for face in shapelist]
 
 
 def encode(img, *, locations=None, model=shape_predictor_68p, jitter=1):
