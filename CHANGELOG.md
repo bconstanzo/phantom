@@ -5,8 +5,19 @@
 ## 0.2
 - Add model training part in the repo.
 - New models.
-- Cleanup and changes.
-* New examples.
+- Code leanup and changes:
+    - Changes to how `faces.Shape` and subclasses work.
+        - `faces.Shape` subclasses now know the model with which they work and
+          how to draw their points/lines over faces.
+    - Fixed `utils.draw_faces` (and related functions) to work with Shape
+      objects.
+* New examples and changes:
+    * Examples were renamed for better clarity. Those named with "cam_" at the
+      beginning require a webcam.
+    * examples/cam_recognize.py finds a known face in webcam input
+    * examples/cluster.py walks over a path, finding faces on images, then
+      encodes them and applies clustering to detect how many people are present
+      in them.
 * setup.py
 
 ## 0.1

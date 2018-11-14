@@ -32,19 +32,6 @@ def color_correct(base, dest, baselm):
     return ret
 
 
-# TODO: implement a Landmark class to delete this function
-def _landmark_points(landmarks):
-    """
-    Quick comprehension to get the points of a facial landmark in list form.
-
-    FIXME: :param landmarks: a dict of facial landmarks, an element of facial_recognition.face_landmarks.
-    :return: list of points, in order.
-    """
-    return [e 
-            for k in landmarks
-            for e in landmarks[k]]
-
-
 def _draw_face_line(img, shape, color=(0, 255, 0), thick=2):
     """
     Semi-private function that draws the landmarks of a face over an image,
