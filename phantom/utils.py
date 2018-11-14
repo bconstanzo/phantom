@@ -32,48 +32,6 @@ def color_correct(base, dest, baselm):
     return ret
 
 
-def _draw_face_line(img, shape, color=(0, 255, 0), thick=2):
-    """
-    Semi-private function that draws the landmarks of a face over an image,
-    using lines.
-    
-    :param img: image on which to draw
-    :param shape: `phantom.faces.Shape` object describing a face in img
-    :param color: BGR color for drawing
-    :param thick: line thickness
-    """
-    color_ = color
-    for key in shape:
-        pairs = zip(shape[key][:-1], shape[key][1:])
-        if key == "right_eye":
-            color_ = (0, 0, 255)
-        else:
-            color_ = color
-        for point1, point2 in pairs:
-            cv2.line(img, point1, point2, color_, thickness=thick)
-    return None
-
-
-def _draw_face_numbers(img, shape, color=(0, 255, 0), thick=2):
-    pass
-
-
-def _draw_face_points(img, shape, color=(0, 255, 0), thick=2):
-    """
-    Semi-private funciton that draws the landmarks of a face over an image,
-    using points.
-    
-    :param img: image on which to draw
-    :param shape: `phantom.faces.Shape` object describing a face in img
-    :param color: BGR color for drawing
-    :param thick: line thickness, also used as circle radius
-    """
-    for key in shape:
-        for point in shape[key]:
-            cv2.circle(img, point, thick, color, thickness=thick)
-    return None
-
-
 def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=True):
     """
     Draw a set of faces over img.
@@ -92,14 +50,14 @@ def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=T
     if mode == "line":
         mode = "_draw_lines"
     elif mode == "points":
-        draw = "_draw_points"
+        mode = "_draw_points"
     elif mode == "numbers":
-        draw = "_draw_numbers"
+        mode = "_draw_numbers"
     else:
         raise ValueError("Invalid value for `mode` parameter.")
     for face in faces:
-        draw = getattr(face, draw)
-        draw(img_, face.dict, color=color, thick=thick)
+        draw = getattr(face, mode)
+        draw(img_, color=color, thick=thick)
     return img_
 
 

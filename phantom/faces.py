@@ -63,10 +63,12 @@ class Shape:
     
     def _draw_points(self, img, color, thick):
         """
-        Subclasses must define the logic for drawing this shape over an image,
-        using points.
+        Subclasses can define the logic for drawing this shape over an image,
+        using points, however a base implementation is provided.
         """
-        pass
+        for point in self.points:
+            cv2.circle(img, point, thick, color, thickness=thick)
+        return None
     
     def _draw_numbers(self, img, color, thick):
         """
@@ -96,6 +98,19 @@ class Shape68p(Shape):
             "lips_bottom":   p[54:60] + [p[48], p[60]] + p[67:63:-1],
             # "mouth":         p[],  # gotta check if it's usefull to implement this
         }
+    
+    def _draw_lines(self, img, color, thick):
+        shape = self.dict
+        color_ = color
+        for key in shape:
+            pairs = zip(shape[key][:-1], shape[key][1:])
+            if key == "right_eye":
+                color_ = (0, 0, 255)
+            else:
+                color_ = color
+            for point1, point2 in pairs:
+                cv2.line(img, point1, point2, color_, thickness=thick)
+        return None
 
 
 class FaceVault:
