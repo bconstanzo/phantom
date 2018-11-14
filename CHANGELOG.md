@@ -6,11 +6,12 @@
 - Add model training part in the repo.
 - New models.
 - Cleanup and changes.
-- setup.py
+* New examples.
+* setup.py
 
 ## 0.1
-- Published to GitHub.
-- Files/directories cleanup.
+* Published to GitHub.
+* Files/directories cleanup.
 
 ### 0.0.3
 * `faces` module implemented.
