@@ -215,6 +215,9 @@ def encode(img, *, locations=None, model=shape_predictor_68p, jitter=1):
     :param locations: list of tuples (left, top, right, bottom) with face 
         locations
     :param model: shape predictor
+    :param jitter: an integer number of times to scramble the image a bit, and
+        re-run the encoding. Higher jitter makes for slightly better encodings,
+        though it slows down the encoding.
     """
     if locations is None:
         locations = detect(img)
@@ -226,10 +229,10 @@ def compare(face1, face2):
     """
     Compares two face encodings (from dlib/`phantom.faces.encodings`).
 
-    A distance under 0.6 means they are most certainly the same person (the
-    lower the more certain). A distance slightly over 0.6 may mean they are the
-    same person or not (pick a low enough epsilon). Distances over 0.6 mean the
-    faces correspond to different people.
+    A distance under 0.6 means the faces correspond to the same person. A
+    distance slightly over 0.6 (+epsilon) means it could be the same person, for
+    a low enough epsilon. Distances over 0.6 mean the faces are of different
+    people.
 
     :param face1: dlibs 128-long face encoding
     :param face2: dlibs 128-long face encoding
