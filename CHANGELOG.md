@@ -2,15 +2,19 @@
 # 1.0
 (once a stable API is reached)
 
-## 0.2
-- Add model training part in the repo.
+## 0.3
+- Add model training directory in the repo
 - New models.
+
+## 0.2
+- Tooling for datasets and training.
 - Code leanup and changes:
-    - Changes to how `faces.Shape` and subclasses work.
+    * Changes to how `faces.Shape` and subclasses work.
         - `faces.Shape` subclasses now know the model with which they work and
           how to draw their points/lines over faces.
-    - Fixed `utils.draw_faces` (and related functions) to work with Shape
+    * Fixed `utils.draw_faces` (and related functions) to work with Shape
       objects.
+    * Deleted old, un-used functions.
 * New examples and changes:
     * Examples were renamed for better clarity. Those named with "cam_" at the
       beginning require a webcam.
