@@ -1,6 +1,6 @@
 # phantom gender detector
 This model is aimed at trying to detect the gender of a person, based on the
-128-D face descriptores made by the dlib_face_recognition_resnet_model_v1
+128-D face descriptors made by the dlib_face_recognition_resnet_model_v1
 network.
 
 The training dataset is derived from the dlib 5 point face landmark dataset
@@ -26,7 +26,7 @@ The training dataset is derived from the dlib 5 point face landmark dataset
     1.  If tagging was skipped, load the tagging data from the pickle file.
     2.  An RBF-kernel SVM dlib object is created, configured and trained [3].
     3.  The SVM is pickled and saved.
-3. If `FLAG_TEST` is set:
+3.  If `FLAG_TEST` is set:
     1.  The SVM is loaded (from disk, or already present in memory).
     2.  The thest dataset is loaded (a list of dictionarys with path and gender
         keys.
