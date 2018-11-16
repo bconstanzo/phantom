@@ -168,7 +168,7 @@ def _tuple_to_rect(t):
     return dlib.rectangle(*t)
 
 
-def detect(img, upsample=1):
+def detect(img, *, upsample=1):
     """
     Detects faces present in an image.
 
@@ -182,12 +182,13 @@ def detect(img, upsample=1):
     return [_rect_to_tuple(r) for r in face_detector(img, upsample)]
 
 
-def detect_cnn(img, upsamples):
+def detect_cnn(img, *, upsample=1):
     """
     Detects faces present in an image, using `cv2.dnn` module.
     
     Work in progress.
-    :param ...:
+    :param upsample: (Note: for now it's just to be compatible with the `detect`
+        signature, may not be necessary)
     :return: list of tuples (left, top, right, bottom) with each face location
     """
     detections = []
