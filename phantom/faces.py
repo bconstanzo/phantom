@@ -182,6 +182,18 @@ def detect(img, upsample=1):
     return [_rect_to_tuple(r) for r in face_detector(img, upsample)]
 
 
+def detect_cnn(img, upsamples):
+    """
+    Detects faces present in an image, using `cv2.dnn` module.
+    
+    Work in progress.
+    :param ...:
+    :return: list of tuples (left, top, right, bottom) with each face location
+    """
+    detections = []
+    return detections
+
+
 def landmark(img, *, locations=None, model=Shape68p, upsample=1):
     """
     Detects the facial landmarks of each face present in an image.
