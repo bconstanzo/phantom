@@ -211,7 +211,7 @@ def landmark(img, *, locations=None, model=Shape68p, upsample=1):
         and landmarks of every face
     """
     if locations is None:
-        locations = detect(img, upsample)
+        locations = detect(img, upsample=upsample)
     class_ = model
     model = class_.model  # TODO: might want to improve the names here
     shapelist = [model(img, _tuple_to_rect(loc)) for loc in locations]
