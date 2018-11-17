@@ -138,9 +138,18 @@ def load_tagged(path):
     """
     Loads the tagged image data from a CSV file.
 
-    :return: empty list
+    :return: list of TaggedFace
     """
-    return []
+    tagged = []
+    with open(path) as filehandle:
+        _header = filehandle.readline()
+        for line in filehandle:
+            path, tag = line.strip().split(",")
+            tag = int(tag)
+            img = cv2.imread(path)
+            faces = landmark(img)
+            tagged.append(TaggedFace(tag, path, img, faces))
+    return tagged
 
 
 def save_tagged(tagged, path):
