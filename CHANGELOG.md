@@ -3,8 +3,8 @@
 (once a stable API is reached)
 
 ## 0.3
-- Add model training directory in the repo
-    - tagger tools, used for phantom_gender_model.
+- Add model training directory in the repo:
+    - tagger tool, used for phantom_gender_model.
 - New models.
 
 ## 0.2
