@@ -8,18 +8,21 @@ import glob
 import numpy as np
 
 
+from collections import namedtuple
 from itertools import cycle
 from phantom.faces import detect, landmark
 from phantom.utils import draw_faces
 
 
+# Here be ~dragons~ the part were you can tweak configs
 FLAG_TAG   = True
-FLAG_SAVE  = False
+FLAG_SAVE  = True
 FLAG_TRAIN = True
 FLAG_TEST  = True
 PATH_TRAIN = "D:/Storage-post-SSD/dlib_faces_5points/images"
 PATH_SAVE  = "./model.pickle"
 PATH_TEST  = ""
+CONST_FONT = cv2.FONT_HERSHEY_SIMPLEX
 tags_female = +1
 tags_male   = -1
 tagged = []
@@ -32,11 +35,16 @@ color_cycle = cycle([
     (255,   0, 255),
 ])
 
+
+# Classes/namedtuples
+TaggedFace = namedtuple("TaggedFace", "gender_tag path img face")
+
+
 def tag():
     """
     Show images from a path waiting for user input to tag them.
 
-    :return: list of tuples (path, tag) for each image
+    :return: list of TaggedFace for each image
     """
     def redraw(img, face, color, text):
         face = ((draw_faces(img, faces, color=color).astype(np.float32) * 0.5) + 
@@ -48,8 +56,8 @@ def tag():
             noface = cv2.resize(noface, (int(width/2), int(height/2)))
         
         for y, line in enumerate(text.split("\n")):
-            cv2.putText(face, line, (0, y * 20 + 20), cv2.FONT_HERSHEY_IMPLEX, 0.75, color
-            cv2.putText(noface, line, (0, y * 20 + 20), cv2.FONT_HERSHEY_SIMPLEX, 0.75, color)
+            cv2.putText(face,   line, (0, y * 20 + 20), CONST_FONT, 0.75, color, 2)
+            cv2.putText(noface, line, (0, y * 20 + 20), CONST_FONT, 0.75, color, 2)
         return face, noface
 
 
@@ -93,7 +101,7 @@ def tag():
         if key == "f":
             tag = tags_female
             count_f += 1
-        tagged.append((filename, tag))
+        tagged.append(TaggedFace(tag, filename, img, faces))
     for t in tagged:
         print(t)
     return tagged
