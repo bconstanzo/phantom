@@ -2,15 +2,19 @@
 Tool for quickly tagging face images to generate a training dataset for a
 binary classifier (to detect gender).
 """
+# pylint: disable=E1101
+#   - because of pylint not recognizing dlib.svm_c_trainer_radial_basis
 
 import cv2
+import dlib
 import glob
 import numpy as np
+import pickle
 
 
 from collections import namedtuple
 from itertools import cycle
-from phantom.faces import detect, landmark
+from phantom.faces import detect, encode, landmark
 from phantom.utils import draw_faces
 
 
@@ -52,11 +56,10 @@ class TaggedFace:
     :param face: list of facial landmarks in the image, result of
         `phantom.faces.detect()`
     """
-    def __init__(self, tag, path, img, faces):
+    def __init__(self, tag, path, img):
         self.tag = tag
         self.path = path
         self.img = img
-        self.faces = faces
     
     def __repr__(self):
         return f"{self.__class__.__name__}(tag={self.tag}, path={self.path})"
@@ -128,7 +131,7 @@ def tag():
         if key == "f":
             tag = tags_female
             count_f += 1
-        tagged.append(TaggedFace(tag, filename, img, faces))
+        tagged.append(TaggedFace(tag, filename, img))
     for t in tagged:
         print(t)
     return tagged
@@ -147,8 +150,7 @@ def load_tagged(path):
             path, tag = line.strip().split(",")
             tag = int(tag)
             img = cv2.imread(path)
-            faces = landmark(img)
-            tagged.append(TaggedFace(tag, path, img, faces))
+            tagged.append(TaggedFace(tag, path, img))
     return tagged
 
 
@@ -167,6 +169,34 @@ def save_tagged(tagged, path):
     return None
 
 
+def train(tagged):
+    """
+    Trains an SVM classifier based on the training data passed.
+
+    Mostly based on http://dlib.net/svm_binary_classifier.py.html.
+
+    :param tagged: list of TaggedFace to train on
+    :return: dlib.svm
+    """
+    x = dlib.vectors()  # will carry the facial encodings
+    y = dlib.array()    # will carry the gender label
+    print("Preparing dataset...")
+    total = len(tagged)
+    for i, t in enumerate(tagged):
+        print(f"\rEncoding {t.path} ({i + 1}/{total})...", end="")
+        faces = encode(t.img)
+        x.append(dlib.vector(faces[0]))
+        y.append(t.tag)
+    print("Training SVM...")
+    trainer = dlib.svm_c_trainer_radial_basis()
+    #trainer.be_verbose()
+    trainer.set_c(10)
+    model = trainer.train(x, y)
+    with open(PATH_SVMFILE, "wb") as filehandle:
+        pickle.dump(model, filehandle, 2)
+    return None
+
+
 def main():
     if FLAG_TAG:
         tagged = tag()
@@ -174,6 +204,8 @@ def main():
             save_tagged(tagged, PATH_TAGFILE)
     else:
         tagged = load_tagged(PATH_TAGFILE)
+    if FLAG_TRAIN:
+        train(tagged)
 
 
 if __name__ == "__main__":
