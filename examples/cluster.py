@@ -1,5 +1,5 @@
-# pylint: disable=E1101
 # pylint: disable=E0001
+# pylint: disable=E1101
 
 import cv2
 import sys
@@ -15,10 +15,10 @@ from phantom.faces import detect, encode
 from pprint import pprint
 
 
-path  = "C:/Users/Administrador/Desktop/Cosas/Database/peq"
-procs = 2
+path  = r"D:\Storage-post-SSD\gender\test\small"
+procs = 3
 DEBUG_TIMER = True
-output_folder_path = "clusters"
+output_folder_path = r"D:\Storage-post-SSD\gender\test\small_clustered"
 
 
 def read_and_find(path):
@@ -29,7 +29,7 @@ def read_and_find(path):
     locations = detect(img)
     if not(locations):
         return []
-    return encode(img, locations=locations)
+    return img, encode(img, locations=locations)
 
 
 def main():
@@ -40,35 +40,31 @@ def main():
             futures.append(executor.submit(read_and_find, filename))
     results = []
     for f in futures:
-        results.extend(f.result())
+        result = f.result()
+        if result:
+            results.append(result)
     # now we have to process the faces...
-    tdelta = datetime.datetime.now() - t0
+    t1 = datetime.datetime.now()
 
-    d = []
-
-   # for k, d in enumerate(dets):
-   #     shape = sp(img, d)
-
-    #    face_descriptor = facerec.compute_face_descriptor(img, shape)
-    #    descriptors.append(face_descriptor)
-    #  images.append((img, shape))
-
-    labels = dlib.chinese_whispers_clustering(d, 0.5)
+    images = [r[0] for r in results]
+    results = [dlib.vector(r[1][0]) for r in results]  # tied to 1 face per image...
+    labels = dlib.chinese_whispers_clustering(results, 0.5)
     num_classes = len(set(labels))
-    print("Number of clusters: {}".format(num_classes))
 
-    print("Saving faces in largest cluster to output folder...")
+    t2 = datetime.datetime.now()
+    
+    print("Number of clusters: {}".format(num_classes))
+    print("Saving faces to output folder...")
 
     for i, label in enumerate(labels):
-
-     images = []      
-     img, shape = images[i]
-     images.append((img, shape)) 
-     file_path = os.path.join(output_folder_path, f"{label}_face_{i}")
-     dlib.save_face_chip(img, shape, file_path, size=150, padding=0.25)
+        img = images[i]
+        file_path = os.path.join(output_folder_path, f"{label}_face_{i}.jpg")
+        cv2.imwrite(file_path, img)
 
     if DEBUG_TIMER:
-        print(f"Time taken: {tdelta}")
+        print(f"Time taken encoding  : {t1 - t0}")
+        print(f"Tome taken clustering: {t2 - t1}")
+        print(f"Total time           : {t2 - t0}")
 
 if __name__ == "__main__":
     main()
