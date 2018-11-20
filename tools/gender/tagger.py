@@ -77,6 +77,10 @@ def tag():
     :return: list of TaggedFace for each image
     """
     def redraw(img, face, color, text):
+        """
+        Groups together all the frame drawing logic, since it was needed on
+        many places.
+        """
         face = ((draw_faces(img, faces, color=color).astype(np.float32) * 0.5) + 
                 (img * 0.5)).astype(np.uint8)
         noface = img.copy()
@@ -134,6 +138,7 @@ def tag():
         tagged.append(TaggedFace(tag, filename, img))
     for t in tagged:
         print(t)
+    cv2.destroyAllWindows()
     return tagged
 
 
@@ -193,7 +198,7 @@ def train(tagged):
     trainer.set_c(10)
     model = trainer.train(x, y)
     with open(PATH_SVMFILE, "wb") as filehandle:
-        pickle.dump(model, filehandle, 2)
+        pickle.dump(model, filehandle)
     return None
 
 
