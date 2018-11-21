@@ -19,10 +19,10 @@ from phantom.utils import draw_faces
 
 
 # Here be ~dragons~ the part were you can tweak configs
-FLAG_TAG     = False
+FLAG_TAG     = True
 FLAG_SAVE    = False
-FLAG_TRAIN   = True
-FLAG_TEST    = True
+FLAG_TRAIN   = False
+FLAG_TEST    = False
 PATH_TRAIN   = "D:/Storage-post-SSD/dlib_faces_5points/images"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
@@ -72,16 +72,21 @@ def tag():
     We're keeping only the images were dlibs HOG face detector picks up only one
     face. Using dlibs 5 point face landmark dataset a balanced female/male ratio
     is found at about ~600 images. We also skip images were landmarking goes
-    wrong, as they can affect the result of facial encoding.
+    wrong, as they can negatively affect the result of facial encoding.
 
     :return: list of TaggedFace for each image
     """
-    def redraw(img, face, color, text):
+    def redraw(img, face, locations, color, text):
         """
         Groups together all the frame drawing logic, since it was needed on
         many places.
         """
-        face = ((draw_faces(img, faces, color=color).astype(np.float32) * 0.5) + 
+        point1 = (locations[0][0], locations[0][1])
+        point2 = (locations[0][2], locations[0][3])
+        img_ = img.copy()
+        face_and_rect = cv2.rectangle(img_, point1, point2, color=color, thickness=2)
+        face_and_rect = draw_faces(img_, faces, color=color)
+        face = ((face_and_rect * 0.5) + 
                 (img * 0.5)).astype(np.uint8)
         noface = img.copy()
         height, width = img.shape[:2]
@@ -101,21 +106,22 @@ def tag():
     color = next(color_cycle)
     for filename in glob.glob(f"{PATH_TRAIN}/*.jpg"):
         img = cv2.imread(filename)
-        faces = landmark(img)
+        locations = detect(img)
+        faces = landmark(img, locations=locations)
         if len(faces) != 1:
             continue
         toggle_face = True
         text = (f"total : {count_f + count_m}\n"
                 f"female: {count_f}\n"
                 f"male  : {count_m}")
-        frame_face, frame_noface = redraw(img, faces, color, text)
+        frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
         while key not in "q mf":
             key = chr(cv2.waitKey()).lower()
             if key == "k":
                 color = next(color_cycle)
-                frame_face, frame_noface = redraw(img, faces, color, text)
+                frame_face, frame_noface = redraw(img, faces, locations, color, text)
                 toggle_face = True
                 cv2.imshow("Tagger", frame_face)
             if key == "l":

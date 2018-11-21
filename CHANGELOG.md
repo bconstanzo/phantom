@@ -6,6 +6,8 @@
 - Add model training directory in the repo:
     - tagger tool, used for phantom_gender_model.
 - New models.
+    - OpenCVs DNN facial detector.
+    - Gender predictor based on facial encodings (own).
 
 ## 0.2
 * Tooling for datasets and training.
