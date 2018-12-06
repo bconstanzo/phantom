@@ -6,7 +6,7 @@ a library for working with faces in python
 * NumPy 1.15+
 * matplotlib
 * scikit-learn
-* OpenCV 3.4+
+* OpenCV 4+
 * dlib 19.8.1
 
 ## Installing on Windows

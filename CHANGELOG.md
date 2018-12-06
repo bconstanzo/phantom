@@ -3,15 +3,18 @@
 (once a stable API is reached)
 
 ## 0.3
-- Add model training directory in the repo:
-    - tagger tool, used for phantom_gender_model.
-- New models.
-    - OpenCVs DNN facial detector.
-    - Gender predictor based on facial encodings (own).
+* Added /tools directory in the repo. This directory holds tools and files
+  used to create custom models:
+    * tools/gender contains tagger.py, a tool used to create the training
+      dataset for phantom_gender_model, based on dlibs 5 point face landmark
+      dataset.
+* New models:
+    * Gender predictor based on facial encodings (own).
+* Changed requirements to OpenCV 4.
 
 ## 0.2
 * Tooling for datasets and training.
-* Code leanup and changes:
+* Code cleanup and changes:
     * Changes to how `faces.Shape` and subclasses work.
         * `faces.Shape` subclasses now know the model with which they work and
           how to draw their points/lines over faces.
