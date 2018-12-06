@@ -19,18 +19,31 @@ https://github.com/davisking/dlib-models
 import cv2
 import dlib
 import numpy as np
+import pickle
 
 
 from pkg_resources import resource_filename
 
 
+def _unpickle(path):
+    """
+    A simple wrapper to keep the loading of pickled models sane, and in line
+    with the code style.
+    """
+    with open(path, "rb") as filehandle:
+        obj = pickle.load(filehandle)
+    return obj
+
+
 # paths for the model files
+_path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_resnet_model_v1.dat")
+_path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
-_path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_resnet_model_v1.dat")
 # and we instance the models
 face_detector       = dlib.get_frontal_face_detector()
 face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
+gender_model        = _unpickle(_path_gender)
 shape_predictor_5p  = dlib.shape_predictor(_path_shape_5p)
 shape_predictor_68p = dlib.shape_predictor(_path_shape_68p)
 
@@ -192,6 +205,7 @@ def detect_cnn(img, *, upsample=1):
     :return: list of tuples (left, top, right, bottom) with each face location
     """
     detections = []
+    # TODO: implement dlibs face detecting CNN
     return detections
 
 
@@ -252,3 +266,18 @@ def compare(face1, face2):
     :return: float, distance between `face1` and `face2`
     """
     return np.linalg.norm(face1 - face2)
+
+
+def estimate_gender(face):
+    """
+    Estimates a characteristic based on the face that is passed.
+
+    :param face: dlibs 128-long face encoding
+    :return: float, estimated gender. The gender model has been trained as
+        value 1 for females, and -1 for males. So, a value of -0.5 means "mainly
+        male" and can be considered as such. Values between -0.3 and 0.3 mean
+        the model is not certain enough, and should be considered as "unknown"
+        or "uncertain"
+    """
+    vector = dlib.vector(face)
+    return gender_model(vector)
