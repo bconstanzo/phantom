@@ -208,6 +208,16 @@ def train(tagged):
     return None
 
 
+def test():
+    """
+    See:
+    * https://talhassner.github.io/home/publication/2015_CVPR
+    * https://talhassner.github.io/home/projects/Adience/Adience-data.html
+    * https://talhassner.github.io/home/projects/frontalize/CVPR2015_frontalize.pdf
+    """
+    pass
+
+
 def main():
     if FLAG_TAG:
         tagged = tag()
