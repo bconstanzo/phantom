@@ -22,14 +22,21 @@ output_folder_path = r"D:\Storage-post-SSD\gender\test\small_clustered"
 
 
 def read_and_find(path):
+    """
+    Reads an image from a path, and locates and encodes any face on it.
+
+    :param path: path to an image
+    :return: tuple of (cv2/np.ndarray, list of encodings, list of locations)
+        or empty tuple if no face was found
+    """
     print(f"Reading {path}...")
     img = cv2.imread(path)
     if img is None:
-        return []
+        return tuple()
     locations = detect(img)
     if not(locations):
-        return []
-    return img, encode(img, locations=locations)
+        return tuple()
+    return img, encode(img, locations=locations), locations
 
 
 def main():
