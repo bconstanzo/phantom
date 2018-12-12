@@ -39,6 +39,20 @@ def read_and_find(path):
     return img, encode(img, locations=locations), locations
 
 
+def cluster(resultset)
+    """
+    Works over the provided resultset to cluster the faces on it. resultset
+    comes from `read_and_find`.
+
+    :param resultset: 
+    """
+    images = [r[0] for r in resultset]
+    results = [dlib.vector(r[1][0]) for r in resultset]  # tied to 1 face per image...
+    labels = dlib.chinese_whispers_clustering(resultset, 0.5)
+    num_classes = len(set(labels))
+    return None
+
+
 def main():
     t0 = datetime.datetime.now()
     with ProcessPoolExecutor(max_workers=procs) as executor:
@@ -52,12 +66,7 @@ def main():
             results.append(result)
     # now we have to process the faces...
     t1 = datetime.datetime.now()
-
-    images = [r[0] for r in results]
-    results = [dlib.vector(r[1][0]) for r in results]  # tied to 1 face per image...
-    labels = dlib.chinese_whispers_clustering(results, 0.5)
-    num_classes = len(set(labels))
-
+    cluster(results)
     t2 = datetime.datetime.now()
     
     print("Number of clusters: {}".format(num_classes))
