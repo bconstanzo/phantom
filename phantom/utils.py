@@ -42,6 +42,7 @@ def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=T
     :param thick: line thicknes or circle radius, depending on mode
     :param mode: draw lines or points over the landmark points
     :param on_copy: whether to work on a copy or `img` directly
+    :return: cv2/np.ndarray
     """
     if on_copy:
         img_ = img.copy()
@@ -87,6 +88,43 @@ def imshow(img):
     :param img: image to render.
     """
     # TODO: maybe extend to support rendering of multiple images?
+    # TODO: add color-mode management (eg: BGR, RGB, HSL, etc)
     temp = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     plt.imshow(temp)
     plt.show()
+
+
+def image_grid(images, grid, *, borders=False, colors=None, text_index=False,
+              size=(64, 64)):
+    """
+    Renders a list of images on a grid. Developed in the first place to check
+    facial clustering results.
+
+    :param images: list of cv2 images (np.ndarray)
+    :param grid: tuple of ints (cols, rows)
+    :param colors: list of BGR tuples for each element of faces
+    :param borders: boolean, indicates if borders shouls be drawn around each
+        face
+    :param text_index: boolean, indicates if the index must be written on the
+        thumbnail
+    :param size: thumbnail size, to resize each face found
+    :return: cv2/np.ndarray
+    """
+    grid_w, grid_h = grid
+    grid_cap = grid_w * grid_h
+    assert len(images) <= grid_cap, "grid is not large enough."
+    if colors is None:
+        colors = [(255, 0, 0)] * len(images)
+    size_w, size_h = size
+    ret = np.zeros((grid_h * size_h, grid_w * size_w, 3))  # TODO: generalize to grayscale images
+    for idx, packed in enumerate(zip(images, colors)):
+        img, color = packed  # didn't find a better way yet -- not happy about it
+        img_copy = img.copy()
+        if text_index:
+            cv2.putText(img_copy, str(idx), (7, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color)
+        if borders:
+            cv2.rectangle(img_copy, (0, 0), (size_w - 1, size_h - 1), color, 2)
+        x = (idx  % grid_w) * size_w
+        y = (idx // grid_w) * size_h
+        ret[y: y + size_h, x: x + size_w] = img_copy
+    return ret
