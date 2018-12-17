@@ -12,7 +12,7 @@ import os
 
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
-from phantom.faces import detect, encode
+from phantom.faces import compare, detect, encode
 from phantom.utils import image_grid
 from pprint import pprint
 from sklearn.cluster import DBSCAN, KMeans
@@ -80,13 +80,26 @@ def cluster(resultset):
     t2 = datetime.datetime.now()
     # now we group all the images for each cluster into a grid
     grid_images = defaultdict(list)
-    for idx, img, label in zip(range(len(face_images)), face_images, km.labels_):
-        print(f"Image: {paths[images_x_faces[idx]]}...")
+    count_outlier = 0
+    for idx, (img, label) in enumerate(zip(face_images, km.labels_)):
         if img is not None:
-            try:
-                grid_images[label].append(cv2.resize(img, (96, 96)))
-            except cv2.error:
-                pass
+            centroid = km.cluster_centers_[label]
+            distance = compare(centroid, faces[idx])
+            if distance < 0.475:
+                try:
+                    grid_images[label].append(cv2.resize(img, (96, 96)))
+                except cv2.error:
+                    print(f"Raised -: {paths[images_x_faces[idx]]}")
+                    pass
+            else:
+                print(f"Clustered face too far away from the centroid. ({distance})")
+                try:
+                    out = cv2.resize(img, (96, 96))
+                    cv2.imwrite(f"{output_folder_path}/outlier_grid_{label}_outlier_{count_outlier}.jpg", out)
+                    count_outlier += 1
+                except cv2.error:
+                    pass
+
     labels_set = set(km.labels_)
     for label in labels_set:
         # TODO: change this to a more flexible approach
