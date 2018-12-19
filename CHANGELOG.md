@@ -2,6 +2,19 @@
 # 1.0
 (once a stable API is reached)
 
+## 0.5 (WIP)
++ Move part of the clustering logic from the example into the `faces.Atlas`
+  class. This clears the example code and helps to build new features on top of
+  clustering (and the resulting clusters).
+
+## 0.4
+* Added scikit-learn as a requirement.
+    * The cluster example has been adapted to use DBSCAN and KMeans as
+      clustering algorithms (from scikit-learn). Combined, they give better
+      accuracy when detecting the number of people and, and then classifying
+      them into (more) correct labels. The KMeans object also has a .predict()`
+      method that helps matching new faces against a known dataset.
+
 ## 0.3
 * Added /tools directory in the repo. This directory holds tools and files
   used to create custom models:
@@ -9,7 +22,8 @@
       dataset for phantom_gender_model, based on dlibs 5 point face landmark
       dataset.
 * New models:
-    * Gender predictor based on facial encodings (own).
+    * Gender predictor based on facial encodings (own). Implemented in 
+      `faces.estimate_gender`.
 * Changed requirements to OpenCV 4.
 
 ## 0.2

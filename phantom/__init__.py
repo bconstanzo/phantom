@@ -3,4 +3,4 @@ import phantom.faces
 import phantom.utils
 import phantom.video
 
-__version__ = "0.3.0"
+__version__ = "0.4.0"
