@@ -8,6 +8,10 @@ from phantom.faces import compare, encode, detect
 
 known_faces = {
     "Bruno": "c:/test/phantom/tests/img4.jpg",
+    "Luciano": "c:/test/phantom/tests/luciano2.jpg",
+    "Fer": "c:/test/phantom/tests/fer.jpg",
+    "Ana": "c:/test/phantom/tests/ana.jpg",
+    "Santi": "c:/test/phantom/tests/santi.jpg",
 }
 
 for name, impath in known_faces.items():

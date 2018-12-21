@@ -7,7 +7,7 @@ from phantom.faces import detect, landmark
 from phantom.utils import draw_faces, color_correct
 
 video = cv2.VideoCapture(0)
-newface = cv2.imread("mask.jpg")
+newface = cv2.imread("c:/test/phantom/mask.jpg")
 newface_marks = landmark(newface)
 
 kern_erode = np.ones((7, 7), dtype=np.uint8)
