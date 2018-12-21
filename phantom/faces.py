@@ -23,6 +23,7 @@ import pickle
 
 
 from pkg_resources import resource_filename
+from sklearn.cluster import DBSCAN, KMeans
 
 
 def _unpickle(path):
@@ -150,8 +151,42 @@ class Shape68p(Shape):
         return None
 
 
-class FaceVault:
-    pass
+class Atlas:
+    """
+    A large grouping of facial encodings.
+
+    :param encodings: list of facial encodings
+    :param path: the path to which the atlas will persist on disk
+    """
+    def __init__(self, encodings, path):
+        self.encodings = encodings
+        self.clusters  = {}
+        self.groups    = None
+        self.grouped   = False
+    
+    def group(self):
+        """
+        Used clustering algorithms to group all the faces of the Atlas into
+        distinct groups. These can later be used to match new faces, or compare
+        to other Atlases.
+        """
+        pass
+    
+    def load(self):
+        """
+        Loads an Atlas from disk, read from `self.path`.
+        """
+        with open(self.path, "rb") as fhandle:
+            new_dict = pickle.load(fhandle)
+        self.__dict__.clear()
+        self.__dict__.update(new_dict)
+    
+    def save(self):
+        """
+        Persists the Atlas on disk, written to `self.path`.
+        """
+        with open(self.path, "wb") as fhandle:
+            pickle.dump(self.__dict__, fhandle)
 
 
 
