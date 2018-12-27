@@ -161,11 +161,12 @@ class Atlas:
     :param encodings: list of facial encodings
     :param path: the path to which the atlas will persist on disk
     """
-    def __init__(self, encodings, path):
-        self.encodings = encodings
+    def __init__(self, elements, path):
+        self.elements  = elements
         self.clusters  = {}
         self.groups    = None
         self.grouped   = False
+        self.path      = path
     
     def group(self):
         """
