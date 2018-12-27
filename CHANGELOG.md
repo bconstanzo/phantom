@@ -6,6 +6,8 @@
 + Move part of the clustering logic from the example into the `faces.Atlas`
   class. This clears the example code and helps to build new features on top of
   clustering (and the resulting clusters).
+* Moved on to dlib 19.16.
+* 
 
 ## 0.4
 * Added scikit-learn as a requirement.
