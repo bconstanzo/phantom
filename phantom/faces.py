@@ -154,6 +154,29 @@ class Shape68p(Shape):
         return None
 
 
+class Face:
+    """
+    This is a convenience class that helps to gather, in a single place, the
+    encoding, landmarks, image, and origin of a face.
+
+    In time we may use this class to transparently replace some conventions of
+    phantom.
+
+    :param landmark: a Shape object, that describes the landmarks of the face
+    :param encoding: a 128-d vector encoding for a face
+    :param image: an np.ndarray/cv2 image
+    :param origin: path to a file  # we have yet to work on lazy loading
+    :param location: location of a face within origin
+    """
+    def __init__(self, encoding=None, image=None, origin=None, landmark=None, location=None):
+        self.encoding = encoding
+        self.image    = image
+        self.origin   = origin
+        self.landmark = landmark
+        self.location = location
+        self.tags     = {}
+
+
 class Atlas:
     """
     A large grouping of facial encodings.
