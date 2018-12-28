@@ -25,8 +25,8 @@ C_SAVE_ATLAS = True
 
 # ...and variables
 path  = r"D:\Storage-post-SSD\Wapp\WhatsApp Images"
-path  = r"C:\Bruno\Sistemas Operativos\InFoConf 2\Fotos\Watermark"    # keeping the other path as a stress-test
-path  = r"D:\Storage-post-SSD\gender\test\small"
+path  = r"D:\Storage-post-SSD\gender\test\small"  # keeping the other path as a stress-test
+
 procs = 3
 DEBUG_TIMER = True
 output_folder_path = r"D:\Storage-post-SSD\gender\cluster_test"
@@ -87,7 +87,8 @@ def cluster(resultset):
                 i = np.zeros((C_GRID_SIZE[0], C_GRID_SIZE[1], 3))
             o = paths[images_x_faces[idx]]
             elements.append((e, i, o))
-        atlas = Atlas([Face(e, i, o) for e, i, o in elements], "faceatlas.dat")
+        atlas = Atlas([Face(encoding=e, image=i, origin=o) 
+                       for e, i, o in elements], "faceatlas.dat")
         atlas.save()
         
     # the idea is simple, we apply DBSCAN with a basic configuration and use
