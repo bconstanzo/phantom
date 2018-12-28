@@ -16,6 +16,7 @@ from phantom.faces import compare, detect, encode, Atlas, Face
 from phantom.utils import image_grid
 from pprint import pprint
 from sklearn.cluster import DBSCAN, KMeans
+from sklearn import metrics
 
 
 # Constants...
@@ -50,6 +51,28 @@ def read_and_find(path):
     if C_LOAD_ATLAS:  # we don't have to do the encodings in this case
         return img, [], locations, path
     return img, encode(img, locations=locations), locations, path
+
+
+def lerp_color(d):
+    """
+    Used to assign a color to the Silhouette scores for every sample when
+    drawing the image grids.
+    """
+    p0 = (0, 0, 255)
+    p1 = (0, 255, 0)
+    p2 = (255, 0, 0)
+    if d < 0:
+        a = p0
+        b = p1
+        d = -d
+    else:
+        a = p2
+        b = p1
+    return (
+        int(a[0] * d + b[0] * (1 - d)),
+        int(a[1] * d + b[1] * (1 - d)),
+        int(a[2] * d + b[2] * (1 - d)),
+        )
 
 
 def cluster(resultset):
@@ -114,19 +137,26 @@ def cluster(resultset):
     t2 = datetime.datetime.now()
     # now we group all the images for each cluster into a grid
     grid_images = defaultdict(list)
+    grid_colors = defaultdict(list)
+    grid_scores = defaultdict(list)
     count_outlier = 0
-    for idx, (img, label) in enumerate(zip(face_images, km.labels_)):
+    s_scores = metrics.silhouette_samples([e.encoding for e in atlas.elements], db.labels_)
+    for idx, (img, label, score) in enumerate(zip(face_images, db.labels_, s_scores)):
         if img is not None:
-            centroid = km.cluster_centers_[label]
-            distance = compare(centroid, faces[idx])
-            if distance < 0.4625:
+            #centroid = km.cluster_centers_[label]
+            #distance = compare(centroid, faces[idx])
+            distance = 0.5
+            if distance < 0.9625:
                 try:
                     grid_images[label].append(cv2.resize(img, C_GRID_SIZE))
+                    grid_colors[label].append(lerp_color(score))
+                    grid_scores[label].append(score)
                 except cv2.error:
                     print(f"Raised -: {paths[images_x_faces[idx]]}")
                     pass
             else:
-                print(f"Clustered face too far away from the centroid. ({label}_{count_outlier}, {distance})")
+                print(f"Clustered face too far away from the centroid."
+                      f"({label}_{count_outlier}, {distance})")
                 try:
                     out = cv2.resize(img, C_GRID_SIZE)
                     cv2.imwrite(f"{output_folder_path}/outlier_grid_{label}_{count_outlier}.jpg", out)
@@ -134,7 +164,7 @@ def cluster(resultset):
                 except cv2.error:
                     pass
 
-    labels_set = set(km.labels_)
+    labels_set = set(db.labels_)
     for label in labels_set:
         # TODO: change this to a more flexible approach
         if len(grid_images[label]) < 10:
@@ -150,8 +180,14 @@ def cluster(resultset):
         elif len(grid_images[label]) <= 400:
             grid_size = (20,20)
         else:
-            grid_size = (30, 30)
-        out = image_grid(grid_images[label], grid_size, size=C_GRID_SIZE)
+            grid_size = (50, 50)
+        out = image_grid(grid_images[label], grid_size, borders=True,
+                         colors=grid_colors[label], size=C_GRID_SIZE)
+        score = np.mean(grid_scores[label])
+        height = out.shape[0]
+        ypos = height - 32
+        cv2.putText(out, f"{score:0.3f}", (12, ypos + 2), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
+        cv2.putText(out, f"{score:0.3f}", (10, ypos), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.imwrite(f"{output_folder_path}/grid_{label}.jpg", out)
     t3 = datetime.datetime.now()
     print(f"Number of people found: {num_people}")
