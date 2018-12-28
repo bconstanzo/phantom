@@ -12,14 +12,21 @@ import os
 
 from collections import defaultdict
 from concurrent.futures import ProcessPoolExecutor
-from phantom.faces import compare, detect, encode
+from phantom.faces import compare, detect, encode, Atlas, Face
 from phantom.utils import image_grid
 from pprint import pprint
 from sklearn.cluster import DBSCAN, KMeans
 
 
+# Constants...
+C_GRID_SIZE  = (96, 96)
+C_LOAD_ATLAS = False
+C_SAVE_ATLAS = True
+
+# ...and variables
 path  = r"D:\Storage-post-SSD\Wapp\WhatsApp Images"
-path  = r"D:\Storage-post-SSD\gender\test\small"    # keeping the other path as a stress-test
+path  = r"C:\Bruno\Sistemas Operativos\InFoConf 2\Fotos\Watermark"    # keeping the other path as a stress-test
+path  = r"D:\Storage-post-SSD\gender\test\small"
 procs = 3
 DEBUG_TIMER = True
 output_folder_path = r"D:\Storage-post-SSD\gender\cluster_test"
@@ -40,6 +47,8 @@ def read_and_find(path):
     locations = detect(img)
     if not(locations):
         return tuple()
+    if C_LOAD_ATLAS:  # we don't have to do the encodings in this case
+        return img, [], locations, path
     return img, encode(img, locations=locations), locations, path
 
 
@@ -67,6 +76,20 @@ def cluster(resultset):
             roi = img[top:bottom, left:right]
             face_images.append(roi)
             images_x_faces.append(idx)
+    if C_SAVE_ATLAS:
+        elements = []
+        for idx in range(len(faces)): #  ugly, but we'll manage it for now
+            e = faces[idx]
+            try:
+                i = cv2.resize(face_images[idx], C_GRID_SIZE)
+            except cv2.error:
+                print(f"cv2.error resizing for the atlas...")
+                i = np.zeros((C_GRID_SIZE[0], C_GRID_SIZE[1], 3))
+            o = paths[images_x_faces[idx]]
+            elements.append((e, i, o))
+        atlas = Atlas([Face(e, i, o) for e, i, o in elements], "faceatlas.dat")
+        atlas.save()
+        
     # the idea is simple, we apply DBSCAN with a basic configuration and use
     # its result to apply k-means clustering:
     print(f"Number of faces detected: {len(faces)}")
@@ -76,7 +99,17 @@ def cluster(resultset):
     # we can now approximate how many people are present...
     num_people = len(set(i for i in db.labels_ if i >= 0))
     # ...and use k-means to identify all the labels that DBSCAN couldn't
-    km = KMeans(init="k-means++", n_clusters=num_people, n_init=10).fit(faces)
+    #km = KMeans(init="k-means++", n_clusters=num_people, n_init=10).fit(faces)
+    k_set = set()
+    k_init = []
+    for f, label in zip(faces, db.labels_):
+        if label < 0:
+            continue
+        if label in k_set:
+            continue
+        k_init.append(f)
+        k_set.add(label)
+    km = KMeans(init=np.array(k_init), n_clusters=num_people, n_init=1).fit(faces)
     t2 = datetime.datetime.now()
     # now we group all the images for each cluster into a grid
     grid_images = defaultdict(list)
@@ -85,17 +118,17 @@ def cluster(resultset):
         if img is not None:
             centroid = km.cluster_centers_[label]
             distance = compare(centroid, faces[idx])
-            if distance < 0.475:
+            if distance < 0.4625:
                 try:
-                    grid_images[label].append(cv2.resize(img, (96, 96)))
+                    grid_images[label].append(cv2.resize(img, C_GRID_SIZE))
                 except cv2.error:
                     print(f"Raised -: {paths[images_x_faces[idx]]}")
                     pass
             else:
-                print(f"Clustered face too far away from the centroid. ({distance})")
+                print(f"Clustered face too far away from the centroid. ({label}_{count_outlier}, {distance})")
                 try:
-                    out = cv2.resize(img, (96, 96))
-                    cv2.imwrite(f"{output_folder_path}/outlier_grid_{label}_outlier_{count_outlier}.jpg", out)
+                    out = cv2.resize(img, C_GRID_SIZE)
+                    cv2.imwrite(f"{output_folder_path}/outlier_grid_{label}_{count_outlier}.jpg", out)
                     count_outlier += 1
                 except cv2.error:
                     pass
@@ -117,18 +150,17 @@ def cluster(resultset):
             grid_size = (20,20)
         else:
             grid_size = (30, 30)
-        out = image_grid(grid_images[label], grid_size, size=(96, 96))
+        out = image_grid(grid_images[label], grid_size, size=C_GRID_SIZE)
         cv2.imwrite(f"{output_folder_path}/grid_{label}.jpg", out)
     t3 = datetime.datetime.now()
     print(f"Number of people found: {num_people}")
     print(f"DBSCAN took {t1 - t0}")
     print(f"KMeans took {t2 - t1}")
-    print(f"image_grid() and saving took ")
+    print(f"image_grid() and saving took {t3 - t2}")
     return None
 
 
-def main():
-    t0 = datetime.datetime.now()
+def multiprocess_read_images():
     with ProcessPoolExecutor(max_workers=procs) as executor:
         futures = []
         for filename in glob.glob(os.path.join(path, "*.jpg")):
@@ -138,6 +170,12 @@ def main():
         result = f.result()
         if result:
             results.append(result)
+    return results
+
+
+def main():
+    t0 = datetime.datetime.now()
+    results = multiprocess_read_images()
     # now we have to process the faces...
     t1 = datetime.datetime.now()
     cluster(results)
