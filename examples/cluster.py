@@ -166,21 +166,8 @@ def cluster(resultset):
 
     labels_set = set(db.labels_)
     for label in labels_set:
-        # TODO: change this to a more flexible approach
-        if len(grid_images[label]) < 10:
-            grid_size = (3,3)
-        elif len(grid_images[label]) <= 25:
-            grid_size = (5,5)
-        elif len(grid_images[label]) <  50:
-            grid_size = (7,7)
-        elif len(grid_images[label]) <= 81:
-            grid_size = (9,9)
-        elif len(grid_images[label]) <= 121:
-            grid_size = (11,11)
-        elif len(grid_images[label]) <= 400:
-            grid_size = (20,20)
-        else:
-            grid_size = (50, 50)
+        square_size = int(np.sqrt(len(grid_images[label]))) + 1
+        grid_size = (square_size, square_size)
         out = image_grid(grid_images[label], grid_size, borders=True,
                          colors=grid_colors[label], size=C_GRID_SIZE)
         score = np.mean(grid_scores[label])
