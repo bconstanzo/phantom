@@ -111,7 +111,7 @@ def cluster(resultset):
             o = paths[images_x_faces[idx]]
             elements.append((e, i, o))
         atlas = Atlas([Face(encoding=e, image=i, origin=o) 
-                       for e, i, o in elements], "faceatlas.dat")
+                       for e, i, o in elements], "faces.atlas")
         atlas.save()
         
     # the idea is simple, we apply DBSCAN with a basic configuration and use
