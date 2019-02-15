@@ -165,9 +165,12 @@ class Face:
     :param landmark: a Shape object, that describes the landmarks of the face
     :param encoding: a 128-d vector encoding for a face
     :param image: an np.ndarray/cv2 image
-    :param origin: path to a file  # we have yet to work on lazy loading
+    :param origin: path to a file
+    :param landmarks: Shape object for the face
     :param location: location of a face within origin
     """
+    # TODO: lazy loading of images from origin
+    # TODO: extend the landmark parameter so it's a list/dict of Shapes?
     def __init__(self, encoding=None, image=None, origin=None, landmark=None, location=None):
         self.encoding = encoding
         self.image    = image
@@ -190,6 +193,8 @@ class Atlas:
         self.groups    = None
         self.grouped   = False
         self.path      = path
+        self._db       = DBSCAN(eps=0.475, min_samples=2)
+        self._km       = None
     
     def group(self):
         """
