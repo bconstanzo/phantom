@@ -1,0 +1,3 @@
+"""
+Geometrical transformations over images.
+"""
