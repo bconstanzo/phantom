@@ -1,5 +1,5 @@
 # phantom
-a library for working with faces in python
+forensic image processing in python
 
 ## Requirements
 * Python 3.6.x
@@ -7,7 +7,7 @@ a library for working with faces in python
 * matplotlib
 * scikit-learn 0.20+
 * OpenCV 4+
-* dlib 19.8.1
+* dlib 19.16 (19.8.1 still works)
 
 ## Installing on Windows
 Since Windows tends to be a bit harder to get things working on, we have
@@ -33,7 +33,7 @@ Linux and macOS should be easier. If you have problems, point us at it so that
 we can work out detailed instructions.
 
 ## Notes
-* When usign our compiled dlib wheel, you may get a puzzling ImportError whein
+* When usign our compiled dlib wheel, you may get a puzzling ImportError when
   trying to import dlib (not phantom). If this happens, you can fix it by
   installing Intel MKL (download from https://software.intel.com/en-us/mkl) and
   adding the following values to your environment variables:
