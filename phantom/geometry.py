@@ -95,7 +95,6 @@ def grid_transform(source, grid_src, grid_dst, *, inter=cv2.INTER_CUBIC):
         mask = np.zeros((h, w, 3), dtype=np.float32)
         cv2.fillConvexPoly(mask, t_dst, (1.0, 1.0, 1.0))  # , cv2.LINE_AA, 0)
         imask = -1. * (mask - 1)
-        plt.imshow(mask); plt.show()
         hom, _status = cv2.findHomography(np.float32(src), np.float32(t_dst))
         render = cv2.warpPerspective(source, hom, (w, h), flags=inter)
         d_roi = out[y: y + h, x: x + w]
