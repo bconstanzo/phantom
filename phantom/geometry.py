@@ -47,6 +47,29 @@ def _borders(plane):
     return x.min(), y.min(), x.max() - x.min(), y.max() - y.min()
 
 
+def _split_line(line, steps=1):
+    """
+    Takes a line by segments (two points at each end) and splits it in half. The
+    process can be repeated multiple times while preserving precision in the
+    point locations.
+    
+    :param line: list of (x, y) tuples, at list two points long
+    :param steps: number of times to perform line-splitting
+    :return: list of (x, y) tuples
+    """
+    # TODO: extend the mechanism to work over curves
+    line_ = line[:]
+    for _step in range(steps):
+        new_line = []
+        for p1, p2 in zip(line_, line_[1:]):
+            p_mid = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1])/2)
+            new_line += [p1, p_mid]
+        new_line.append(p2)  # and now we add the last point back
+        line_ = new_line[:]
+    new_line = [(round(x), round(y)) for x, y in new_line]
+    return new_line
+
+
 def grid_from_lines(lines):
     """
     Helper function. Creates a Grid object from a sequence of lines. Order in
