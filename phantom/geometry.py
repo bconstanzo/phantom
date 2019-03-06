@@ -33,17 +33,17 @@ class Grid:
         pass
 
 
-def _borders(plane):
+def _borders(panel):
     """
-    plane is an array of [x, y] x 4 points that define the plane. It should
-    come from a Grid instance.
+    Returns the borders of a panel, where panel is an array of [x, y] x4 points
+    that define the plane. It should come from a Grid instance.
 
-    :param plane: ndarray of 4 [x, y] points that define the plane
+    :param panel: ndarray of 4 [x, y] points that define the plane
     :return: tuple of leftmost, topmost, width and height of the region of
         interest for the plane
     """
-    x = plane[:, 0]
-    y = plane[:, 1]
+    x = panel[:, 0]
+    y = panel[:, 1]
     return x.min(), y.min(), x.max() - x.min(), y.max() - y.min()
 
 
