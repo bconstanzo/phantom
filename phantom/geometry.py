@@ -70,7 +70,7 @@ def _split_line(line, steps=1):
     return new_line
 
 
-def grid_from_lines(lines):
+def grid_from_lines(lines, size=(1, 1)):
     """
     Helper function. Creates a Grid object from a sequence of lines. Order in
     the sequence matters. The assumed direction is top to bottom. All lines must
@@ -81,10 +81,11 @@ def grid_from_lines(lines):
     left as an  excercise to the user.
 
     :param lines: list of lists, each being a list of (x, y) points
+    :param size: numpy style tuple for the shape of the resulting Grid (used when
+        transforming images through `grid_transform()`)
     :return: Grid object, with panels built from the lines passed
     """
     panels = []
-    size = (1, 1)
     line_pairs = zip(lines, lines[1:])
     for p, q in line_pairs:
         for p1, p2, q1, q2 in zip(p, p[1:], q, q[1:]):
