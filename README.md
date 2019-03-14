@@ -4,6 +4,7 @@ forensic image processing in python
 ## Requirements
 * Python 3.6.x
 * NumPy 1.15+
+* scipy 1.2.1+
 * matplotlib
 * scikit-learn 0.20+
 * OpenCV 4+
