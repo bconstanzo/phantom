@@ -16,6 +16,19 @@ import cv2
 import numpy as np
 from scipy.fftpack import dct
 
+
+def compare(h1, h2, threshold=12):
+    """
+    Compare two hashes (in numpy array form) and return True for equivalence,
+    False otherwise.
+
+    :param h1: first hash to compare
+    :param h2: second hash to compare
+    :param threshold: similarity threhshold on the Hamming distance
+    """
+    return np.sum(h1 ^ h2) <= threshold
+
+
 def a_hash(source):
     """
     Image similarity hash based on the average colour of an image.
