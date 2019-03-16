@@ -14,7 +14,7 @@ Hashing techniques aplicable to images.
 
 import cv2
 import numpy as np
-from scipy.fftpack import dct
+import scipy.fftpack
 
 
 def compare(h1, h2, threshold=12):
@@ -71,7 +71,7 @@ def p_hash(source):
     """
     pre = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
     pre = cv2.resize(pre, (32, 32), interpolation=cv2.INTER_AREA)
-    pre = dct(pre)
+    pre = scipy.fftpack.dct(pre, type=2)
     average = np.average(pre[:8, :8].flatten()[1:])
     hash_ = np.zeros((8, 8), dtype=np.uint8)
     hash_[pre[:8, :8] > average] = 1
