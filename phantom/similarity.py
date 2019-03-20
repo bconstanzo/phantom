@@ -69,10 +69,11 @@ def p_hash(source):
 
     http://www.hackerfactor.com/blog/index.php?/archives/432-Looks-Like-It.html
     """
-    pre = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
-    pre = cv2.resize(pre, (32, 32), interpolation=cv2.INTER_AREA)
-    pre = scipy.fftpack.dct(pre, type=2)
-    average = np.average(pre[:8, :8].flatten()[1:])
+    gray = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
+    gray = cv2.resize(gray, (32, 32), interpolation=cv2.INTER_AREA)
+    gray = scipy.fftpack.dct(gray, type=2, axis=0)
+    gray = scipy.fftpack.dct(gray, type=2, axis=1)
+    average = np.median(gray[:8, :8])
     hash_ = np.zeros((8, 8), dtype=np.uint8)
-    hash_[pre[:8, :8] > average] = 1
+    hash_[gray[:8, :8] > average] = 1
     return hash_
