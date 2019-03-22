@@ -55,9 +55,7 @@ def d_hash(source):
     """
     gray = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, (9, 8), interpolation=cv2.INTER_AREA)
-    gray = gray.astype(np.int16)
-    diff = gray[:,:8] - gray[:, 1: 9]
-    hash_ = (np.sign(diff) + 1) / 2
+    hash_ = gray[:,:8] < gray[:, 1: 9]
     return hash_.astype(np.uint8)
 
 
