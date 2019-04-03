@@ -7,6 +7,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+from itertools import cycle
+
 
 def color_correct(base, dest, baselm):
     """
@@ -56,9 +58,13 @@ def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=T
         mode = "_draw_numbers"
     else:
         raise ValueError("Invalid value for `mode` parameter.")
-    for face in faces:
+    if color is None:
+        color = cycle([(0, 255, 0)])
+    if isinstance(color, tuple):
+        color = cycle([color])
+    for face, c in zip(faces, color):
         draw = getattr(face, mode)
-        draw(img_, color=color, thick=thick)
+        draw(img_, color=c, thick=thick)
     return img_
 
 
