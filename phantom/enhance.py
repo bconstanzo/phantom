@@ -13,8 +13,8 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
     // input-3 sigma: sigma of point spread function (PSF)
     // output result: deconvolution result
     """
-	
-	EPSILON = 2.2204e-16
+
+    epsilon = 2.2204e-16
 
     # Window size of PSF
     win_size = 8 * sigmag + 1
@@ -42,7 +42,7 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
             cv2.multiply(T2, T2, tmpMat2)
 
             # https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#sum
-            lambda_ = cv2.sumElems(tmpMat1)[0] / (cv2.sumElems(tmpMat2)[0] + EPSILON)
+            lambda_ = cv2.sumElems(tmpMat1)[0] / (cv2.sumElems(tmpMat2)[0] + epsilon)
             print("lambda [", j, "]", lambda_)
 
         # Y = J1 + (lambda_ * (J1 - J2))
@@ -54,11 +54,11 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
 
         # 1) applying Gaussian filter
         reBlurred = cv2.GaussianBlur(Y, (int(win_size), int(win_size)), sigmag)
-        reBlurred[(reBlurred <= 0)] = EPSILON
+        reBlurred[(reBlurred <= 0)] = epsilon
 
         # 2)
         cv2.divide(wI, reBlurred, imR)
-        imR = imR + EPSILON
+        imR = imR + epsilon
 
         # 3) applying Gaussian filter
         imR = cv2.GaussianBlur(imR, (int(win_size), int(win_size)), sigmag)
@@ -73,26 +73,26 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
     result = J1.copy()
     return result
 
+
 # example
 # sigmaG: sigma of point spread function
 sigma = 6.0
 winSize = 8 * sigma + 1
 
-img = cv2.imread('lena.png', cv2.IMREAD_GRAYSCALE)    # img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+img = cv2.imread('doge.jpg', cv2.IMREAD_GRAYSCALE)    # img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 cv2.imshow('original', img)
 
 img = np.float64(img)   # convert to -> img.convertTo(img, CV_64F);
 
 # Blur the original image
 img = cv2.GaussianBlur(img, (int(winSize), int(winSize)), sigma, sigma)
-# en C++ ->GaussianBlur(img_origen, img_destino, Size(winSize,winSize), sigmaG, sigmaG )
 
 cv2.normalize(img, img, 0, 1, cv2.NORM_MINMAX)
 cv2.imshow('original_blur', img)
 
-result = lucy.lucy_richardson_deconv(img, 200, sigma)
-cv2.normalize(result, result, 0, 1, cv2.NORM_MINMAX)
+res_img = lucy_richardson_deconv(img, 100, sigma)
+cv2.normalize(res_img, res_img, 0, 1, cv2.NORM_MINMAX)
 
-cv2.imshow('result', result)
+cv2.imshow('result', res_img)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
