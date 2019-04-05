@@ -5,6 +5,8 @@ Image enhancement algorithms.
 import cv2
 import numpy as np
 
+# TO READ:
+# * http://onsignalandimageprocessing.blogspot.com/2017/02/lucy-richardson-deconvolution.html
 
 def lucy_richardson_deconv(img, num_iterations, sigmag):
     """" Lucy-Richardson Deconvolution Function
@@ -14,7 +16,7 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
     // output result: deconvolution result
     """
 	
-	EPSILON = 2.2204e-16
+    EPSILON = 2.2204e-16
 
     # Window size of PSF
     win_size = 8 * sigmag + 1
@@ -90,7 +92,7 @@ img = cv2.GaussianBlur(img, (int(winSize), int(winSize)), sigma, sigma)
 cv2.normalize(img, img, 0, 1, cv2.NORM_MINMAX)
 cv2.imshow('original_blur', img)
 
-result = lucy.lucy_richardson_deconv(img, 200, sigma)
+result = lucy_richardson_deconv(img, 200, sigma)
 cv2.normalize(result, result, 0, 1, cv2.NORM_MINMAX)
 
 cv2.imshow('result', result)
