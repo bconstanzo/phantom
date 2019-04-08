@@ -45,8 +45,7 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
             lambda_ = cv2.sumElems(tmp1)[0] / (cv2.sumElems(tmp2)[0] + epsilon)
 
         # y = j1 + (lambda_ * (j1 - j2))
-        multiply = np.multiply(lambda_, np.subtract(j1, j2))
-        y = j1 + multiply
+        y = j1 + np.multiply(lambda_, np.subtract(j1, j2))
 
         y[(y < 0)] = 0
 
