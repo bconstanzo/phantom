@@ -15,8 +15,8 @@ Since Windows tends to be a bit harder to get things working on, we have
 compiled this instructions to get you going:
 
 1. Get latest Python 3.6.x.
-2. Install Numpy, OpenCV and scikit-learn from Christoph Gohlkes wheels 
-https://www.lfd.uci.edu/~gohlke/pythonlibs/.
+2. Install Numpy, Scipy, OpenCV, scikit-learn, and matplotlib (in that order)
+   from Christoph Gohlkes wheels at https://www.lfd.uci.edu/~gohlke/pythonlibs/.
 3. We've compiled dlib 19.16.0 with AVX for Python 3.6 on Windows 64 bits. You
    can find it in the /tools directory. Compared to non-AVX version, it's about
    2.5 times faster.
