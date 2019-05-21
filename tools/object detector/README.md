@@ -61,17 +61,18 @@ Para ambas pruebas el conjunto de datos de test se compuso de 8 imágenes (13 ta
 Ambos modelos detectaron 3/13 tazas = 23% de los objetos.
 
 ##### Osos polares.
-Para esta prueba se proponen 14 imágenes de osos polares donde se pueden ver las caras de frente de los mismos. Solo se consideraron para los rectángulos de detección las caras de osos polares adultos. Las imágenes de entrenamiento junto con el train.xml se encuentran en el repositorio en [oso_polares](/tools/object%20detector/osos_polares)
+Para esta prueba se proponen 14 imágenes de osos polares donde se pueden ver las caras de frente de los mismos. Solo se consideraron para los rectángulos de detección las caras de osos polares adultos. Las imágenes de entrenamiento junto con el train.xml se encuentran en el repositorio en [osos_polares](/tools/object%20detector/osos_polares)
 
 ###### HOG obtenido:
 ![](https://github.com/bconstanzo/phantom/blob/master/tools/object%20detector/osos_polares/hog.png "HOG osos polares")
 
 El conjunto de datos de test que se utilizó se compone de 18 imágenes, las cuales contienen 19 caras de osos polares *adultos*.
+
 ![](https://github.com/bconstanzo/phantom/blob/master/tools/object%20detector/osos_polares/result.png "Ejemplo detección oso polar")
 
 | Prueba                | Falsos positivos           | Falsos negativos  |
 | -------------         |:--------------------------:|:-----------------:|
-| 15 imágenes           | 1                          | 4                |
+| Osos polares          | 1                          | 4                |
 
 El modelo pudo detectar 13/19 = 70% de las caras de osos. Un resultado muy bueno comparándolo con el caso de las tazas. Hay que tener en cuenta que se usó una cantidad mayor de imágenes para el entrenamiento.
 
@@ -80,6 +81,10 @@ Lo bueno de `simple_object_detector` de *dlib* es que con relativamente pocas im
 ___
 ### Referencias
 [1] https://www.learnopencv.com/histogram-of-oriented-gradients/
+
 [2] https://www.learnopencv.com/handwritten-digits-classification-an-opencv-c-python-tutorial/
+
 [3] http://blog.dlib.net/2014/02/dlib-186-released-make-your-own-object.html
+
 [4] http://dlib.net/python/index.html#dlib.train_simple_object_detector
+
