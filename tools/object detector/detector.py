@@ -2,8 +2,8 @@ import dlib
 import glob
 import cv2
 
-PATH_TRAIN_XML = "C:/Users/Ayrton/PycharmProjects/detector/train_1/train.xml"
-PATH_TEST = "C:/Users/Ayrton/PycharmProjects/detector/test_1"
+PATH_TRAIN_XML = "train_data_path.xml"
+PATH_TEST = "test_data"
 
 
 def train(path_xml):
@@ -18,21 +18,20 @@ def train(path_xml):
     options.be_verbose = True
     options.epsilon = 0.005  # epsilon de detencion, valores pequeños -> accurate training
 
+    # utilizando la herramienta https://imglab.ml
+    
     dlib.train_simple_object_detector(path_xml, "detector.svm", options)
-
-    # utilizando la herramienta https://imglab.ml/
-
-    print("")
-    print("Training accuracy: ", dlib.test_simple_object_detector(path_xml, "detector.svm"))
-
-
-def test(path):
+    
+    print("\nTraining accuracy: ", dlib.test_simple_object_detector(path_xml, "detector.svm"))
+    
+    
+def test(path_test):
     detector = dlib.simple_object_detector("detector.svm")
     win = dlib.image_window()
     win.set_image(detector)
     dlib.hit_enter_to_continue()
 
-    for filename in glob.glob(f"{path}/*.jpg"):
+    for filename in glob.glob(f"{path_test}/*.jpg"):
         imagen = cv2.imread(filename)
         dets = detector(imagen)
 
