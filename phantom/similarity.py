@@ -75,3 +75,25 @@ def p_hash(source):
     hash_ = np.zeros((8, 8), dtype=np.uint8)
     hash_[gray[:8, :8] > average] = 1
     return hash_
+
+
+def w_hash(source):
+    """
+    wHash — wavelet hashing. It works in the frequency domain as pHash but it uses DWT instead of DCT.
+    Read more on:
+    https://fullstackml.com/wavelet-image-hash-in-python-3504fdd282b5
+                                -------------------
+                                | cA(LL) | cH(LH) |
+    (cA, (cH, cV, cD))  <--->   -------------------
+                                | cV(HL) | cD(HH) |
+                                -------------------
+    LL, low-low coefficients
+    """
+    gray = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
+    gray = cv2.resize(gray, (16, 16), interpolation=cv2.INTER_AREA)
+    gray = pywt.dwt2(gray, 'haar')[0]   # cA(LL)
+    average = np.median(gray)
+    hash_ = np.zeros((8, 8), dtype=np.uint8)
+    hash_[gray[:8, :8] > average] = 1
+
+    return hash_
