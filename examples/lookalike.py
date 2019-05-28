@@ -2,7 +2,8 @@ import argparse
 import os.path
 
 thresholds = {
-    "dhash": 8,
+    "ahash": 3,
+    "dhash": 6,
     "phash": 12,
 }
 
@@ -17,7 +18,7 @@ def parse_args():
         "--hash",
         dest="hash",
         help="what hashing algorithm use for the images",
-        choices=("dhash", "phash"),
+        choices=("ahash", "dhash", "phash"),
         default="dhash"
     )
     parser.add_argument(
@@ -47,10 +48,13 @@ def main():
     import numpy as np
     import glob
     from collections import defaultdict
-    from phantom.similarity import d_hash, p_hash
+    from phantom.similarity import d_hash, p_hash, a_hash
     from pprint import pprint
 
-    if args.hash == "dhash":
+    if args.hash == "ahash":
+        hash_func = a_hash
+        thresh = thresholds["ahash"]
+    elif args.hash == "dhash":
         hash_func = d_hash
         thresh = thresholds["dhash"]
     else:
@@ -58,6 +62,7 @@ def main():
         thresh = thresholds["phash"]
     needles = []
     print(f"Loading needles from {args.needles}...")
+    print(f"    - Matching threshold set at {thresh}")
     for path in glob.glob(f"{args.needles}/*.jpg"):
         img = cv2.imread(path)
         if img is None:
