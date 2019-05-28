@@ -62,7 +62,7 @@ def _split_line(line, steps=1):
     for _step in range(steps):
         new_line = []
         for p1, p2 in zip(line_, line_[1:]):
-            p_mid = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1])/2)
+            p_mid = ((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2)
             new_line += [p1, p_mid]
         new_line.append(p2)  # and now we add the last point back
         line_ = new_line[:]

@@ -40,7 +40,8 @@ def draw_faces(img, faces, *, color=(0, 255, 0), thick=2, mode="line", on_copy=T
 
     :param img: image on which to draw
     :param shape: `phantom.faces.Shape` object describing a face in img
-    :param color: BGR color for drawing
+    :param color: a BGR color tuple, or an iterable of BGR color tuples. It's
+        turned into a cycle before drawing, and iterated upon for each face
     :param thick: line thicknes or circle radius, depending on mode
     :param mode: draw lines or points over the landmark points
     :param on_copy: whether to work on a copy or `img` directly
