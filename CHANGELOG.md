@@ -3,13 +3,29 @@
 (once a stable API is reached)
 
 ## 0.6 (WIP)
-+ Reorganized the project for more general use cases.
+* Keep reorganizing features:
+    + Functionality in the `align` module moved on to the `faces` module,
+      since its intent was the alignment of faces with respect to one another.
++ Lazy loading of models used in the `faces` module.
 
-## 0.5 (WIP)
+## 0.5.5
+* June 2019 Workshop freeze.
+* + Reorganized the project for more general use cases.
+    + Added `enhance` module, dedicated to image enhancement operations.
+    * Added `geometry` module, dedicated to geometric transformations.
+    * * Added `similarity` module, dedicated to similarity metrics.
+      * We've tested the implementations against imagehash, and have tried to
+        be as compatible with them as we could. That said, the scaling
+        algorithms from OpenCV don't behave the same as those from PIL and there
+        are small differences that result in our implementation not being
+        compatible with imagehash -- simply because the same image will give a
+        different hash depending on which library you use.
+
+## 0.5
 + Move part of the clustering logic from the example into the `faces.Atlas`
   class. This clears the example code and helps to build new features on top of
   clustering (and the resulting clusters).
-* Moved on to dlib 19.16.
+* Moved on to dlib 19.16. (still remain 19.8.1 compatible)
 
 ## 0.4
 * Added scikit-learn as a requirement.
