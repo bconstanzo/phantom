@@ -189,11 +189,11 @@ def morph(base, dest, baselm, destlm, *, inter=cv2.INTER_CUBIC, add_points=False
         d_tri -= np.float32([x, y])
         # ...we generate the triangular mask and its inverse
         mask = np.zeros((h, w, 3), dtype=np.float32)
-        cv2.fillConvexPoly(mask, np.int32(d_tri), (1.0, 1.0, 1.0))  # , cv2.LINE_AA, 0)
+        cv2.fillConvexPoly(mask, np.int32(d_tri), (1.0, 1.0, 1.0))
         imask = -1. * (mask - 1)
         # and now we warp and "render" on the target image
         warp_mat = cv2.getAffineTransform(s_tri, d_tri)
-        render = cv2.warpAffine(s_roi, warp_mat, (w, h), None, flags=inter)  # , borderMode=cv2.BORDER_DEFAULT)
+        render = cv2.warpAffine(s_roi, warp_mat, (w, h), None, flags=inter , borderMode=cv2.BORDER_DEFAULT)
         ret[y: y + h, x: x + w] = (render * mask) + (d_roi * imask)
     # TODO: maybe we could work something on the order of rendering?
     return ret.astype(np.uint8)

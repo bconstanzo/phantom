@@ -117,10 +117,10 @@ def grid_transform(source, grid_src, grid_dst, *, inter=cv2.INTER_CUBIC):
         x, y, w, h = _borders(dst)
         t_dst = dst - [x, y]  # transform the dst positions to render-coordinates
         mask = np.zeros((h, w, 3), dtype=np.float32)
-        cv2.fillConvexPoly(mask, t_dst, (1.0, 1.0, 1.0))  # , cv2.LINE_AA, 0)
+        cv2.fillConvexPoly(mask, t_dst, (1.0, 1.0, 1.0))
         imask = -1. * (mask - 1)
         hom, _status = cv2.findHomography(np.float32(src), np.float32(t_dst))
-        render = cv2.warpPerspective(source, hom, (w, h), flags=inter)
+        render = cv2.warpPerspective(source, hom, (w, h), flags=inter, borderMode=cv2.BORDER_DEFAULT)
         d_roi = out[y: y + h, x: x + w]
         out[y: y + h, x: x + w] = (render * mask) + (d_roi * imask)
     return out.astype(np.uint8)
