@@ -6,6 +6,8 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+from .utils import imshow
+
 
 class Grid:
     """
@@ -121,6 +123,16 @@ def grid_transform(source, grid_src, grid_dst, *, inter=cv2.INTER_CUBIC):
         imask = -1. * (mask - 1)
         hom, _status = cv2.findHomography(np.float32(src), np.float32(t_dst))
         render = cv2.warpPerspective(source, hom, (w, h), flags=inter, borderMode=cv2.BORDER_DEFAULT)
-        d_roi = out[y: y + h, x: x + w]
+        #print(f"out.shape: {out.shape}")
+        #print(f"y:{y} h:{h} x:{x}, w:{w}, x+w{x+w}")
+        d_roi_pos = (slice(y, y + h), slice(x, x + w))# y: y + h, x: x + w
+        #print(f"d_roi_pos: {d_roi_pos}")
+        d_roi = out[d_roi_pos]
+        #imshow(render * mask)
+        #print(f"d_roi.shape:{d_roi.shape}, imask.shape:{imask.shape}")
+        #imshow(imask)
+        #imshow(d_roi)
+        #imshow(d_roi * imask)
+        #print(f"y:{y} h:{h} x:{x}, w:{w}, dst:{dst}, t_dst:{t_dst}")
         out[y: y + h, x: x + w] = (render * mask) + (d_roi * imask)
     return out.astype(np.uint8)
