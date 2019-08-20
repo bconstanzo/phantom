@@ -17,6 +17,28 @@ class Grid:
         self.panels = panels
         self.size = size
     
+    def _draw_lines(self, img, color, thick, direction="h", debug=False):
+        for panel in self.panels:
+            p, q, r, s = map(tuple, panel)  # unpack the tuple
+            print(f"p:{p}, q:{q}, r:{r}, s:{s}")
+            if direction == "h":
+                cv2.line(img, p, q, color, thickness=thick)
+                cv2.line(img, p, r, color, thickness=thick)
+                cv2.line(img, q, s, color, thickness=thick)
+                cv2.line(img, r, s, color, thickness=thick)
+            else:
+                cv2.line(img, p, q, color, thickness=thick)
+                cv2.line(img, p, s, color, thickness=thick)
+                cv2.line(img, q, r, color, thickness=thick)
+                cv2.line(img, r, s, color, thickness=thick)
+            if debug:
+                cv2.circle(img, p, thick, (  0,   0, 255), thickness=thick)
+                cv2.circle(img, q, thick, (  0, 255, 255), thickness=thick)
+                cv2.circle(img, r, thick, (  0, 255,   0), thickness=thick)
+                cv2.circle(img, s, thick, (255, 255,   0), thickness=thick)
+                break
+        return None
+    
     def _draw_points(self, img, color, thick):
         """
         Subclasses can define the logic for drawing this shape over an image,
