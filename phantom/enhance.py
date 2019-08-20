@@ -26,20 +26,21 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
     w_i = img.copy()
     im_r = img.copy()
 
-    t1 = np.zeros((np.size(img, 0), np.size(img, 1), 1), dtype="double")
-    t2 = np.zeros((np.size(img, 0), np.size(img, 1), 1), dtype="double")
-    tmp1 = np.zeros((np.size(img, 0), np.size(img, 1), 1), dtype="double")
-    tmp2 = np.zeros((np.size(img, 0), np.size(img, 1), 1), dtype="double")
+    t1 = np.zeros(img.shape, dtype=np.float32)
+    t2 = np.zeros(img.shape, dtype=np.float32)
+    tmp1 = np.zeros(img.shape, dtype=np.float32)
+    tmp2 = np.zeros(img.shape, dtype=np.float32)
     # size = (w, h, channels), grayscale -> channels = 1
 
     # Lucy - Rich.Deconvolution CORE
     lambda_ = 0
     for j in range(1, num_iterations):
+        # gotta clean this up, maybe a warmup before the for-loop
         if j > 1:
             # calculation of lambda
             # https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#multiply
-            cv2.multiply(t1, t2, tmp1)   # Calculates the per-element scaled product of two arrays.
-            cv2.multiply(t2, t2, tmp2)
+            tmp1 = t1 * t2
+            tmp2 = t2 * t2
 
             # https://docs.opencv.org/2.4/modules/core/doc/operations_on_arrays.html#sum
             lambda_ = cv2.sumElems(tmp1)[0] / (cv2.sumElems(tmp2)[0] + epsilon)
@@ -53,14 +54,15 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
         re_blurred = cv2.GaussianBlur(y, (int(win_size), int(win_size)), sigmag)
         re_blurred[(re_blurred <= 0)] = epsilon
 
-        cv2.divide(w_i, re_blurred, im_r)
+        cv2.divide(w_i, re_blurred, im_r, 1, cv2.CV_64F)  # couldn't get numpys divide to work yet
         im_r = im_r + epsilon
 
         # applying Gaussian filter
         im_r = cv2.GaussianBlur(im_r, (int(win_size), int(win_size)), sigmag)
 
         j2 = j1.copy()
-        cv2.multiply(y, im_r, j1)
+        # print(f"{y.dtype}, {im_r.dtype}")
+        j1 = y * im_r
 
         t2 = t1.copy()
         t1 = j1 - y
