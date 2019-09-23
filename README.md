@@ -24,7 +24,7 @@ compiled this instructions to get you going:
     Dlib is developed and maintained by Davis E. King. Check www.dlib.net and
     https://github.com/davisking/dlib.
 
-4. You canstill download the wheel for dlib 19.8.1 from
+4. You can still download the wheel for dlib 19.8.1 from
    https://pypi.org/simple/dlib/ (thanks to 
    https://github.com/charlielito/install-dlib-python-windows for the pointer).
    __We don't recommend this, and will eventually drop support for older
@@ -32,6 +32,9 @@ compiled this instructions to get you going:
 
 Linux and macOS should be easier. If you have problems, point us at it so that
 we can work out detailed instructions.
+
+Open a console and go to the directory where you've cloned phantom. Run
+`python setup.py install`.
 
 ## Notes
 * When usign our compiled dlib wheel, you may get a puzzling ImportError when

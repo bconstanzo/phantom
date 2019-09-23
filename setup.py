@@ -29,6 +29,11 @@ setup(
     author = "Bruno Constanzo",
     author_email = "bconstanzo@ufasta.edu.ar",
     url = "https://github.com/bconstanzo/phantom",
+    license = "LGPL 2.1",
+    install_requires = [
+        "numpy", "scipy", "scikit-learn", "dlib", "opencv-python"
+        ],
+    python_requires='>=3.6',
     packages = ['phantom'],
     package_dir={'phantom': 'phantom'},
     package_data={'phantom': ['models/*.dat']},
