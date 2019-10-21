@@ -96,7 +96,13 @@ def imshow(img):
     """
     # TODO: maybe extend to support rendering of multiple images?
     # TODO: add color-mode management (eg: BGR, RGB, HSL, etc)
-    temp = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    color_or_gray = img.shape[2:3]
+    if color_or_gray:
+        # if that's valid, then we have a non-grayscale image
+        # we can asume it's a BGR cv2 ndarray
+        temp = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    else:
+        temp = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
     plt.imshow(temp)
     plt.show()
 
