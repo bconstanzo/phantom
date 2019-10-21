@@ -26,6 +26,33 @@ from pkg_resources import resource_filename
 from sklearn.cluster import DBSCAN, KMeans
 
 
+class _LazyStore:
+    def __init__(self, d=None, r=None):
+        if d is None:
+            d = {}
+        if r is None:
+            r = {}
+        self.dict = d
+        self.reg  = r
+    
+    def register(self, key, initer, *args, **kwargs):
+        self.reg[key] = (initer, args, kwargs)
+    
+    def get(self, key):
+        try:
+            return self.dict[key]
+        except KeyError:
+            pass  # don't want to nest try blocks
+        # so we're here, without our key
+        try:
+            func, args, kwargs = self.reg[key]
+            store = func(*args, **kwargs)
+        except KeyError:
+            raise KeyError("unregistered lazy key.")
+        self.dict[key] = store
+        return store
+
+
 def _unpickle(path):
     """
     A simple wrapper to keep the loading of pickled models sane, and in line
@@ -45,11 +72,27 @@ else:
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
-face_detector       = dlib.get_frontal_face_detector()
-face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
-gender_model        = _unpickle(_path_gender)
-shape_predictor_5p  = dlib.shape_predictor(_path_shape_5p)
-shape_predictor_68p = dlib.shape_predictor(_path_shape_68p)
+# scrub that -- lazy load them, with a lazy store
+lazy_vars = _LazyStore()
+lazy_vars.register(
+    "face_detector", dlib.get_frontal_face_detector
+)
+lazy_vars.register(
+    "face_encoder", dlib.face_recognition_model_v1, _path_encoder
+)
+#face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
+lazy_vars.register(
+    "gender_model", _unpickle, _path_gender
+)
+#gender_model        = _unpickle(_path_gender)
+lazy_vars.register(
+    "shape_predictor_5p", dlib.shape_predictor, _path_shape_5p
+)
+#shape_predictor_5p  = dlib.shape_predictor(_path_shape_5p)
+lazy_vars.register(
+    "shape_predictor_68p", dlib.shape_predictor, _path_shape_68p
+)
+#shape_predictor_68p = dlib.shape_predictor(_path_shape_68p)
 
 
 class Shape:
@@ -58,12 +101,12 @@ class Shape:
 
     :param points: ordered list of points, according to a landmark definition.
     """
-    model = None  # subclasses override this
 
     def __init__(self, points):
         self.points = points
         self.dict = {}
         self._make_dict()
+        self.model = None  # to be overridden by subclasses
     
     def _make_dict(self):
         """
@@ -99,7 +142,9 @@ class Shape5p(Shape):
     """
     5-point facial landmarks Shape object.
     """
-    model = shape_predictor_5p
+    def __init__(self, points):
+        super().__init__(points)
+        self.model = lazy_vars.get("shape_predictor_5p")
 
     def _make_dict(self):
         p = self.points
@@ -113,7 +158,7 @@ class Shape5p(Shape):
         d = self.dict
         points = d["eye_left"] + d["nose"] + d["eye_right"][::-1]
         pairs = list(zip(points[:-1], points[1:]))
-        print(pairs)
+        # print(pairs)
         for point1, point2 in pairs:
             cv2.line(img, point1, point2, color, thickness=thick)
         return None
@@ -123,7 +168,9 @@ class Shape68p(Shape):
     """
     68-point facial landmarks Shape object.
     """
-    model = shape_predictor_68p
+    def __init__(self, points):
+        super().__init__(points)
+        self.model = lazy_vars.get("shape_predictor_68p")
 
     def _make_dict(self):
         p = self.points
@@ -193,8 +240,8 @@ class Atlas:
         self.groups    = None
         self.grouped   = False
         self.path      = path
-        self._db       = DBSCAN(eps=0.475, min_samples=2)
-        self._km       = None
+        self._dbscan   = DBSCAN(eps=0.475, min_samples=2)
+        self._kmeans   = None
     
     def group(self):
         """
@@ -259,6 +306,7 @@ def detect(img, *, upsample=1):
         smaller faces
     :return: list of tuples (left, top, right, bottom) with each face location
     """
+    face_detector = lazy_vars.get("face_detector")
     return [_rect_to_tuple(r) for r in face_detector(img, upsample)]
 
 
@@ -294,12 +342,13 @@ def landmark(img, *, locations=None, model=Shape68p, upsample=1):
     if locations is None:
         locations = detect(img, upsample=upsample)
     class_ = model
-    model = class_.model  # TODO: might want to improve the names here
+    shaper = model([(i, i) for i in range(68)])
+    model = shaper.model  # TODO: might want to improve the names here
     shapelist = [model(img, _tuple_to_rect(loc)) for loc in locations]
     return [class_([(p.x, p.y) for p in face.parts()]) for face in shapelist]
 
 
-def encode(img, *, locations=None, model=shape_predictor_68p, jitter=1):
+def encode(img, *, locations=None, model=Shape68p, jitter=1):
     """
     Detects and encodes all the faces in an image.
 
@@ -315,6 +364,9 @@ def encode(img, *, locations=None, model=shape_predictor_68p, jitter=1):
     """
     if locations is None:
         locations = detect(img)
+    shaper = model([(i, i) for i in range(68)])
+    model = shaper.model  # once again this shadowing...
+    face_encoder = lazy_vars.get("face_encoder")
     shapelist = [model(img, _tuple_to_rect(loc)) for loc in locations]
     return [np.array(face_encoder.compute_face_descriptor(img, shape, jitter)) for shape in shapelist]
 
@@ -347,4 +399,5 @@ def estimate_gender(face):
         or "uncertain"
     """
     vector = dlib.vector(face)
+    gender_model = lazy_vars.get("gender_model")
     return gender_model(vector)
