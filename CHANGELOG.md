@@ -6,11 +6,28 @@
 * Keep reorganizing features:
     + Functionality in the `align` module moved on to the `faces` module,
       since its intent was the alignment of faces with respect to one another.
-+ Lazy loading of models used in the `faces` module.
+* Re-structuring of modules:
+    * `align` is now empty, but will have algorithms and functions related to
+      aligning images with respect to other images, instead of face-specific
+      alignment functions as it used to.
+    * `enhance` has image enhancement functions.
+    * `faces` gathers all the face-related functionality (detecting, landmarking
+      encoding, aligning, etc). `phantom.faces` is now a full sub modue (not 
+      just a file).
+    * `geometry` gathers the geometric transforms and associated functions.
+    + `measure` will have functions related to calibrating and measuring objects
+      in images.
+    * `similarity` has image perceptual hashing functions.
+    * `utils` gathers all utility functions that aren't core functionality of
+      a module.
+    * `video` has functionality that eases working over videos.
+* Lazy loading of models used in the `faces` module.
+    * While the solution works, there's hope for a better mechanism when we move
+      to Python 3.7+ (in the future).
 
 ## 0.5.5
 * June 2019 Workshop freeze.
-* + Reorganized the project for more general use cases.
+* Reorganized the project for more general use cases.
     + Added `enhance` module, dedicated to image enhancement operations.
     * Added `geometry` module, dedicated to geometric transformations.
     * * Added `similarity` module, dedicated to similarity metrics.
