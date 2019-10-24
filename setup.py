@@ -12,7 +12,7 @@
 # You should have received a copy of the GNU General Public License along with this program; if not,
 # write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
 
-from setuptools import setup
+from setuptools import setup, find_packages
 import phantom
 
 long_desc = """"
@@ -34,7 +34,8 @@ setup(
         "numpy", "scipy", "scikit-learn", "dlib", "opencv-python"
         ],
     python_requires='>=3.6',
-    packages = ['phantom'],
+    packages = find_packages(),
+    #packages = ['phantom'],
     package_dir={'phantom': 'phantom'},
     package_data={'phantom': ['models/*.dat']},
 #
