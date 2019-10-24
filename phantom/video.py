@@ -16,6 +16,31 @@ import cv2
 from itertools import cycle
 
 
+class Video:
+    def __init__(self, path):
+        """
+        Iterable video class, it allows writing code of the form:
+
+            >>> vid = phantom.video.Video(path_to_file)
+            >>> for frame in vid:
+            >>>     process(frame)
+        
+        :param path: path to the video.
+        """
+        self.path = path
+    
+    def __iterator(self):
+        cap = cv2.VideoCapture(self.path)
+        status, frame = cap.read()
+        while status:
+            yield frame
+            status, frame = cap.read()
+        cap.release()
+    
+    def __iter__(self):
+        return self.__iterator()
+
+
 def play_list(images, delay=10, esc_key="q", title="phantom playback"):
     """
     Plays a sequence of images as a video, using cv2.imshow().
