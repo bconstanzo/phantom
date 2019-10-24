@@ -1,8 +1,9 @@
-import numpy as np
 import cv2
+import numpy as np
+import phantom
 
 
-from phantom.align import morph
+from phantom.faces.align import morph
 from phantom.faces import detect, landmark
 from phantom.utils import draw_faces, color_correct
 
@@ -20,6 +21,8 @@ def compose(img1, img2, mask):
     return ret
 
 ploc_count = 1000
+
+print(f"Running on phantom version {phantom.__version__}")
 
 while True:
     check, frame = video.read()
