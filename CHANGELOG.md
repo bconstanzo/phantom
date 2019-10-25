@@ -2,7 +2,9 @@
 # 1.0
 (once a stable API is reached)
 
-## 0.6 (WIP)
+## 0.7 (WIP)
+
+## 0.6
 * Keep reorganizing features:
     + Functionality in the `align` module moved on to the `faces` module,
       since its intent was the alignment of faces with respect to one another.
@@ -12,12 +14,12 @@
       alignment functions as it used to.
     * `enhance` has image enhancement functions.
     * `faces` gathers all the face-related functionality (detecting, landmarking
-      encoding, aligning, etc). `phantom.faces` is now a full sub modue (not 
+      encoding, aligning, etc). `phantom.faces` is now a full sub module (not 
       just a file).
     * `geometry` gathers the geometric transforms and associated functions.
     + `measure` will have functions related to calibrating and measuring objects
       in images.
-    * `similarity` has image perceptual hashing functions.
+    * `similarity` has (image) perceptual hashing functions.
     * `utils` gathers all utility functions that aren't core functionality of
       a module.
     * `video` has functionality that eases working over videos.
