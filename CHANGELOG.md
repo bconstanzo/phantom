@@ -8,7 +8,7 @@
 
 ## 0.6
 * Keep reorganizing features:
-    + Functionality in the `align` module moved on to the `faces` module,
+    * Functionality in the `align` module moved on to the `faces` module,
       since its intent was the alignment of faces with respect to one another.
 * Re-structuring of modules:
     * `align` is now empty, but will have algorithms and functions related to
@@ -19,7 +19,7 @@
       encoding, aligning, etc). `phantom.faces` is now a full sub module (not 
       just a file).
     * `geometry` gathers the geometric transforms and associated functions.
-    + `measure` will have functions related to calibrating and measuring objects
+    * `measure` will have functions related to calibrating and measuring objects
       in images.
     * `similarity` has (image) perceptual hashing functions.
     * `utils` gathers all utility functions that aren't core functionality of
