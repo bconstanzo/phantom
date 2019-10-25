@@ -3,6 +3,8 @@
 (once a stable API is reached)
 
 ## 0.7 (WIP)
++ Improvements to face clustering.
++ Object finding via image descriptors.
 
 ## 0.6
 * Keep reorganizing features:
