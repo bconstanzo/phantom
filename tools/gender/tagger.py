@@ -19,11 +19,11 @@ from phantom.utils import draw_faces
 
 
 # Here be ~dragons~ the part were you can tweak configs
-FLAG_TAG     = True
-FLAG_SAVE    = False
-FLAG_TRAIN   = False
+FLAG_TAG     = False
+FLAG_SAVE    = True
+FLAG_TRAIN   = True
 FLAG_TEST    = False
-PATH_TRAIN   = "D:/Storage-post-SSD/dlib_faces_5points/images"
+PATH_TRAIN   = r"C:\Users\valen\Desktop\dataset_infoconf2019\fotos_full"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
@@ -198,6 +198,15 @@ def train(tagged):
         faces = encode(t.img)
         x.append(dlib.vector(faces[0]))
         y.append(t.tag)
+        img = t.img
+        for _ in range(5):
+            faces = encode(img)
+            if not faces:
+                break
+            x.append(dlib.vector(faces[0]))
+            y.append(t.tag)
+            img = cv2.resize(img,None,fx=0.7,fy=0.7)
+
     print("Training SVM...")
     trainer = dlib.svm_c_trainer_radial_basis()
     #trainer.be_verbose()
