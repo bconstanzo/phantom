@@ -118,7 +118,6 @@ def tag():
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
         while key not in "q mf":
-            key = chr(cv2.waitKey()).lower()
             if key == "k":
                 color = next(color_cycle)
                 frame_face, frame_noface = redraw(img, faces, locations, color, text)
@@ -131,6 +130,7 @@ def tag():
                 else:
                     cv2.imshow("Tagger", frame_face)
                     toggle_face = True
+            key = chr(cv2.waitKey()).lower()
         if key == "q":
             break
         if key == " ":
@@ -229,6 +229,7 @@ def test():
 
 def main():
     if FLAG_TAG:
+        print("Tagging...")
         tagged = tag()
         if FLAG_SAVE:
             save_tagged(tagged, PATH_TAGFILE)
