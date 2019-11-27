@@ -69,6 +69,7 @@ if dlib.__version__.startswith("19.8"):
     _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
 else:
     _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
+    _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1b.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
@@ -83,6 +84,9 @@ lazy_vars.register(
 #face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
 lazy_vars.register(
     "gender_model", _unpickle, _path_gender
+)
+lazy_vars.register(
+    "gender_model_1b", _unpickle, _path_gender_1b
 )
 #gender_model        = _unpickle(_path_gender)
 lazy_vars.register(
@@ -387,7 +391,7 @@ def compare(face1, face2):
     return np.linalg.norm(face1 - face2)
 
 
-def estimate_gender(face):
+def estimate_gender(face, *, multi=False):
     """
     Estimates a characteristic based on the face that is passed.
 
@@ -400,4 +404,7 @@ def estimate_gender(face):
     """
     vector = dlib.vector(face)
     gender_model = lazy_vars.get("gender_model")
+    if multi:
+        gender_model2 = lazy_vars.get("gender_model_1b")
+        return (gender_model(vector), gender_model2(vector))
     return gender_model(vector)
