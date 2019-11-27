@@ -19,15 +19,29 @@ from phantom.utils import draw_faces
 
 
 # Here be ~dragons~ the part were you can tweak configs
-FLAG_TAG     = False
-FLAG_SAVE    = True
-FLAG_TRAIN   = True
+FLAG_TAG     = True
+FLAG_SAVE    = False
+FLAG_TRAIN   = False
 FLAG_TEST    = False
-PATH_TRAIN   = r"C:\Users\valen\Desktop\dataset_infoconf2019\fotos_full"
+PATH_TRAIN   = "d:/Test/dlib_faces_5points/images"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
 CONST_FONT   = cv2.FONT_HERSHEY_SIMPLEX
+
+# age tags
+# we define 8 ranges (plus one empty at position 0) fr
+age_tags = [
+    (-1,  -1, "none"),   # this one is a formality, it isn't used
+    (0,    3, "baby"),
+    (4,    9, "child"),
+    (10,  13, "preteen"),
+    (14,  17, "teen"),
+    (18,  25, "young"),
+    (26,  40, "young adult"),
+    (41,  59, "adult"),
+    (60, 100, "elder"),
+]
 
 # and that's it for constants, now a few variables
 tags_female = +1
@@ -56,8 +70,9 @@ class TaggedFace:
     :param face: list of facial landmarks in the image, result of
         `phantom.faces.detect()`
     """
-    def __init__(self, tag, path, img):
+    def __init__(self, tag, age_tag, path, img):
         self.tag = tag
+        self.age_tag = age_tag
         self.path = path
         self.img = img
     
@@ -101,6 +116,8 @@ def tag():
 
 
     tagged = []
+    age_counter = defaultdict(int)
+
     count_f = 0
     count_m = 0
     color = next(color_cycle)
@@ -117,6 +134,7 @@ def tag():
         frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
+        age_tag = 0
         while key not in "q mf":
             if key == "k":
                 color = next(color_cycle)
@@ -130,6 +148,8 @@ def tag():
                 else:
                     cv2.imshow("Tagger", frame_face)
                     toggle_face = True
+            if key in "12345678":
+                age_tag = int(key)
             key = chr(cv2.waitKey()).lower()
         if key == "q":
             break
@@ -141,7 +161,7 @@ def tag():
         if key == "f":
             tag = tags_female
             count_f += 1
-        tagged.append(TaggedFace(tag, filename, img))
+        tagged.append(TaggedFace(tag, age_tag, filename, img))
     for t in tagged:
         print(t)
     cv2.destroyAllWindows()
@@ -158,7 +178,7 @@ def load_tagged(path):
     with open(path) as filehandle:
         _header = filehandle.readline()
         for line in filehandle:
-            path, tag = line.strip().split(",")
+            path, tag, age_tag = line.strip().split(",")
             tag = int(tag)
             img = cv2.imread(path)
             tagged.append(TaggedFace(tag, path, img))
@@ -176,7 +196,7 @@ def save_tagged(tagged, path):
     with open(path, "w") as filehandle:
         filehandle.write(header)
         for t in tagged:
-            filehandle.write(f"{t.path},{t.tag}\n")
+            filehandle.write(f"{t.path},{t.tag},{t.age_tag}\n")
     return None
 
 
