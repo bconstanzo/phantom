@@ -4,7 +4,32 @@ This model is aimed at trying to detect the gender of a person, based on the
 network.
 
 The training dataset is derived from the dlib 5 point face landmark dataset
-[1, 2]. The tagger.py script does the following:
+[1, 2].
+
+Tools present in this directory:
+  * `extract.py` walks over a directory and its images, and crops every face
+    from them into a sepparate file, located in an output folder.
+  * `tagger.py` is used to do manual tagging and training of "basic" SVM models.
+  * `semisuper.py` is used to do semiautomatic tagging of larger datasets, and
+    then presents an interface to review the (automatically) tagged data.
+
+The first version of the gender estimation model was based around a single
+script used to tag the images from the dataset (tagger.py). The second version
+of the model has been thought out to address a few issues that the first model
+had. To better handle the shortcommings, some improvements were made:
+
+  * The v1 model had problems recognizing gender on small faces with few pixels
+    in general. To address this problem, we added data augmentation, in
+    particular the script downscales the training 5 times in 70% steps. This
+    change, paired with a new tagging session, gave way to the v1.1 model.
+  * The v1b model, while improved upon v1, had regressed specifically for the
+    case of children, mislabeling faces that it previously labeled correctly.
+  + `extract.py` and `semisuper.py` were developed accordingly to give better
+    tools to work and evaluate on larger datasets easily.
+  + The age estimation model was also trained, and used iteratively to improve
+    the gender estimation model.
+
+The tagger.py script does the following:
 
 1.  If `FLAG_TAG` is set:
     1.  Open the `path` directory, and then each image inside it.
