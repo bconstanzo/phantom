@@ -12,18 +12,19 @@ import numpy as np
 import pickle
 
 
-from collections import namedtuple
+from collections import defaultdict, namedtuple
 from itertools import cycle
 from phantom.faces import detect, encode, landmark
 from phantom.utils import draw_faces
+from pprint import pformat
 
 
 # Here be ~dragons~ the part were you can tweak configs
 FLAG_TAG     = True
-FLAG_SAVE    = False
+FLAG_SAVE    = True
 FLAG_TRAIN   = False
 FLAG_TEST    = False
-PATH_TRAIN   = "d:/Test/dlib_faces_5points/images"
+PATH_TRAIN   = "d:/Test/dlib_faces_5points/sub_faces"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
@@ -77,7 +78,8 @@ class TaggedFace:
         self.img = img
     
     def __repr__(self):
-        return f"{self.__class__.__name__}(tag={self.tag}, path={self.path})"
+        return (f"{self.__class__.__name__}"
+                f"(tag={self.tag}, age_tag={self.age_tag} path={self.path})")
 
 
 def tag():
@@ -128,13 +130,15 @@ def tag():
         if len(faces) != 1:
             continue
         toggle_face = True
+        age_tag = 0
         text = (f"total : {count_f + count_m}\n"
                 f"female: {count_f}\n"
-                f"male  : {count_m}")
+                f"male  : {count_m}\n"
+                f"age   : {age_tag}\n"
+                +pformat(age_counter))
         frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
-        age_tag = 0
         while key not in "q mf":
             if key == "k":
                 color = next(color_cycle)
@@ -150,6 +154,14 @@ def tag():
                     toggle_face = True
             if key in "12345678":
                 age_tag = int(key)
+                text = (f"total : {count_f + count_m}\n"
+                        f"female: {count_f}\n"
+                        f"male  : {count_m}\n"
+                        f"age   : {age_tag}\n"
+                        +pformat(age_counter))
+                frame_face, frame_noface = redraw(img, faces, locations, color, text)
+                toggle_face = True
+                cv2.imshow("Tagger", frame_face)
             key = chr(cv2.waitKey()).lower()
         if key == "q":
             break
@@ -161,6 +173,7 @@ def tag():
         if key == "f":
             tag = tags_female
             count_f += 1
+        age_counter[age_tag] += 1
         tagged.append(TaggedFace(tag, age_tag, filename, img))
     for t in tagged:
         print(t)
