@@ -16,7 +16,7 @@ from collections import defaultdict, namedtuple
 from itertools import cycle
 from phantom.faces import detect, encode, landmark
 from phantom.utils import draw_faces
-from pprint import pformat
+# from pprint import pformat
 
 
 # Here be ~dragons~ the part were you can tweak configs
@@ -41,7 +41,7 @@ age_tags = [
     (18,  25, "young"),
     (26,  40, "young adult"),
     (41,  59, "adult"),
-    (60, 100, "elder"),
+    (60,  99, "elder"),
 ]
 
 # and that's it for constants, now a few variables
@@ -93,6 +93,15 @@ def tag():
 
     :return: list of TaggedFace for each image
     """
+    def age_table(age_counter, padding=2):
+        lines = [["  "], ["m "], ["f "]]
+        for idx, (low, high, name) in enumerate(age_tags[1:], start=1):
+            lines[0].append(f"{low:{padding}}-{high:{padding}}")
+            lines[1].append(f"{age_counter['m'][idx]:{padding * 2 + 1}}")
+            lines[2].append(f"{age_counter['f'][idx]:{padding * 2 + 1}}")
+        ret = ["|".join(l) for l in lines]
+        return "\n".join(ret)
+
     def redraw(img, face, locations, color, text):
         """
         Groups together all the frame drawing logic, since it was needed on
@@ -112,13 +121,16 @@ def tag():
             noface = cv2.resize(noface, (int(width/2), int(height/2)))
         
         for y, line in enumerate(text.split("\n")):
-            cv2.putText(face,   line, (0, y * 20 + 20), CONST_FONT, 0.75, color, 2)
-            cv2.putText(noface, line, (0, y * 20 + 20), CONST_FONT, 0.75, color, 2)
+            cv2.putText(face,   line, (0, y * 20 + 20), CONST_FONT, 0.6, color, 1)
+            cv2.putText(noface, line, (0, y * 20 + 20), CONST_FONT, 0.6, color, 1)
         return face, noface
 
 
     tagged = []
-    age_counter = defaultdict(int)
+    age_counter = {
+        "m": { i: 0 for i in range(9) },
+        "f": { i: 0 for i in range(9) },
+    }
 
     count_f = 0
     count_m = 0
@@ -135,7 +147,7 @@ def tag():
                 f"female: {count_f}\n"
                 f"male  : {count_m}\n"
                 f"age   : {age_tag}\n"
-                +pformat(age_counter))
+                +age_table(age_counter))
         frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
@@ -158,7 +170,7 @@ def tag():
                         f"female: {count_f}\n"
                         f"male  : {count_m}\n"
                         f"age   : {age_tag}\n"
-                        +pformat(age_counter))
+                        +age_table(age_counter))
                 frame_face, frame_noface = redraw(img, faces, locations, color, text)
                 toggle_face = True
                 cv2.imshow("Tagger", frame_face)
@@ -170,10 +182,11 @@ def tag():
         if key == "m":
             tag = tags_male
             count_m += 1
+            age_counter["m"][age_tag] += 1
         if key == "f":
             tag = tags_female
             count_f += 1
-        age_counter[age_tag] += 1
+            age_counter["f"][age_tag] += 1
         tagged.append(TaggedFace(tag, age_tag, filename, img))
     for t in tagged:
         print(t)
