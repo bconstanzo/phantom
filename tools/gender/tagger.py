@@ -119,6 +119,14 @@ def tag():
         if height > 960  or width > 1800:  # hardcoded and hacky, but works
             face   = cv2.resize(face, (int(width/2), int(height/2)))
             noface = cv2.resize(noface, (int(width/2), int(height/2)))
+        height, width = face.shape[:2]
+        if height < 768 or width < 1024:
+             new_face = np.zeros((768, 1024, 3), dtype=np.uint8)
+             new_noface = np.zeros((768, 1024, 3), dtype=np.uint8)
+             new_face[768-height:, 512-(width//2):512-(width//2)+width] = face
+             new_noface[768-height:, 512-(width//2):512-(width//2)+width] = noface
+             face = new_face
+             noface = new_noface
         
         for y, line in enumerate(text.split("\n")):
             cv2.putText(face,   line, (0, y * 20 + 20), CONST_FONT, 0.6, color, 1)
