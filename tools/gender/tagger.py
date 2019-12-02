@@ -16,7 +16,7 @@ from collections import defaultdict, namedtuple
 from itertools import cycle
 from phantom.faces import detect, encode, landmark
 from phantom.utils import draw_faces
-# from pprint import pformat
+from PIL import Image, ImageDraw, ImageFont 
 
 
 # Here be ~dragons~ the part were you can tweak configs
@@ -28,7 +28,7 @@ PATH_TRAIN   = "d:/Test/dlib_faces_5points/sub_faces"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
-CONST_FONT   = cv2.FONT_HERSHEY_SIMPLEX
+CONST_FONT   = "consola.ttf"
 
 # age tags
 # we define 8 ranges (plus one empty at position 0) fr
@@ -82,6 +82,18 @@ class TaggedFace:
                 f"(tag={self.tag}, age_tag={self.age_tag} path={self.path})")
 
 
+def draw_text(img, text, pos, font, size, color):
+    img_ = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    canvas = Image.fromarray(img_)
+    font = ImageFont.truetype(font, size)
+    color = color[::-1]
+    draw = ImageDraw.Draw(canvas)
+    draw.text(pos, text, color, font=font)
+    ret = cv2.cvtColor(np.array(canvas), cv2.COLOR_RGB2BGR)
+    cv2.imwrite("debug.png", ret)
+    return ret
+
+
 def tag():
     """
     Show images from a path waiting for user input to tag them.
@@ -129,8 +141,8 @@ def tag():
              noface = new_noface
         
         for y, line in enumerate(text.split("\n")):
-            cv2.putText(face,   line, (0, y * 20 + 20), CONST_FONT, 0.6, color, 1)
-            cv2.putText(noface, line, (0, y * 20 + 20), CONST_FONT, 0.6, color, 1)
+            face   = draw_text(face,   line, (0, y * 20 + 20), CONST_FONT, 16, color)
+            noface = draw_text(noface, line, (0, y * 20 + 20), CONST_FONT, 16, color)
         return face, noface
 
 
