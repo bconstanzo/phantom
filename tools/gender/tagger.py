@@ -82,12 +82,14 @@ class TaggedFace:
                 f"(tag={self.tag}, age_tag={self.age_tag} path={self.path})")
 
 
-def draw_text(img, text, pos, font, size, color):
+def draw_text(img, text, pos, font, size, color, *, shadow=True):
     img_ = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     canvas = Image.fromarray(img_)
     font = ImageFont.truetype(font, size)
     color = color[::-1]
     draw = ImageDraw.Draw(canvas)
+    if shadow:
+        draw.text((pos[0] + 1, pos[1] + 1), text, (0, 0, 0), font=font)
     draw.text(pos, text, color, font=font)
     ret = cv2.cvtColor(np.array(canvas), cv2.COLOR_RGB2BGR)
     cv2.imwrite("debug.png", ret)
@@ -106,12 +108,13 @@ def tag():
     :return: list of TaggedFace for each image
     """
     def age_table(age_counter, padding=2):
-        lines = [["  "], ["m "], ["f "]]
+        lines = [["  "], ["m "], ["f "], ["  "]]
         for idx, (low, high, name) in enumerate(age_tags[1:], start=1):
             lines[0].append(f"{low:{padding}}-{high:{padding}}")
             lines[1].append(f"{age_counter['m'][idx]:{padding * 2 + 1}}")
             lines[2].append(f"{age_counter['f'][idx]:{padding * 2 + 1}}")
-        ret = ["|".join(l) for l in lines]
+            lines[3].append(f"{idx:^5}")
+        ret = ["|".join(l) if i < 3 else " ".join(l) for i, l in enumerate(lines)]
         return "\n".join(ret)
 
     def redraw(img, face, locations, color, text):
@@ -128,17 +131,19 @@ def tag():
                 (img * 0.5)).astype(np.uint8)
         noface = img.copy()
         height, width = img.shape[:2]
-        if height > 960  or width > 1800:  # hardcoded and hacky, but works
+        while height > 768  or width > 768:  # hardcoded and hacky, but works
             face   = cv2.resize(face, (int(width/2), int(height/2)))
             noface = cv2.resize(noface, (int(width/2), int(height/2)))
-        height, width = face.shape[:2]
-        if height < 768 or width < 1024:
-             new_face = np.zeros((768, 1024, 3), dtype=np.uint8)
-             new_noface = np.zeros((768, 1024, 3), dtype=np.uint8)
-             new_face[768-height:, 512-(width//2):512-(width//2)+width] = face
-             new_noface[768-height:, 512-(width//2):512-(width//2)+width] = noface
-             face = new_face
-             noface = new_noface
+            height, width = face.shape[:2]
+        if height < 768 or width < 768:
+            new_face = np.zeros((768, 1024, 3), dtype=np.uint8)
+            new_noface = np.zeros((768, 1024, 3), dtype=np.uint8)
+            new_face[384 - (height // 2): 384 - (height // 2) + height,
+                     512 - (width // 2) : 512 - (width // 2)  + width] = face
+            new_noface[384 - (height // 2): 384 - (height // 2) + height,
+                       512 - (width // 2) : 512 - (width // 2)  + width] = noface
+            face   = new_face
+            noface = new_noface
         
         for y, line in enumerate(text.split("\n")):
             face   = draw_text(face,   line, (0, y * 20 + 20), CONST_FONT, 16, color)
