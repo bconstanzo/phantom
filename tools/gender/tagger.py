@@ -28,7 +28,7 @@ PATH_TRAIN   = "d:/Test/dlib_faces_5points/sub_faces"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
-CONST_FONT   = "consola.ttf"
+CONST_FONT   = ImageFont.truetype("consola.ttf", 16)
 
 # age tags
 # we define 8 ranges (plus one empty at position 0) fr
@@ -82,18 +82,16 @@ class TaggedFace:
                 f"(tag={self.tag}, age_tag={self.age_tag} path={self.path})")
 
 
-def draw_text(img, text, pos, font, size, color, *, shadow=True):
-    img_ = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
-    canvas = Image.fromarray(img_)
-    font = ImageFont.truetype(font, size)
+def draw_text(canvas, text, pos, font, size, color, *, shadow=True):
+    # img_ = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    # canvas = Image.fromarray(img_)
     color = color[::-1]
     draw = ImageDraw.Draw(canvas)
     if shadow:
         draw.text((pos[0] + 1, pos[1] + 1), text, (0, 0, 0), font=font)
     draw.text(pos, text, color, font=font)
-    ret = cv2.cvtColor(np.array(canvas), cv2.COLOR_RGB2BGR)
-    cv2.imwrite("debug.png", ret)
-    return ret
+    # ret = cv2.cvtColor(np.array(canvas), cv2.COLOR_RGB2BGR)
+    return canvas  # ret
 
 
 def tag():
@@ -107,13 +105,14 @@ def tag():
 
     :return: list of TaggedFace for each image
     """
-    def age_table(age_counter, padding=2):
-        lines = [["  "], ["m "], ["f "], ["  "]]
+    def age_table(age_counter, age, padding=2):
+        lines = [["  "], ["m "], ["f "], ["  "], ["  "]]
         for idx, (low, high, name) in enumerate(age_tags[1:], start=1):
             lines[0].append(f"{low:{padding}}-{high:{padding}}")
             lines[1].append(f"{age_counter['m'][idx]:{padding * 2 + 1}}")
             lines[2].append(f"{age_counter['f'][idx]:{padding * 2 + 1}}")
             lines[3].append(f"{idx:^5}")
+            lines[4].append(f"{'▲' if age == idx else ' ':^5}")
         ret = ["|".join(l) if i < 3 else " ".join(l) for i, l in enumerate(lines)]
         return "\n".join(ret)
 
@@ -145,9 +144,15 @@ def tag():
             face   = new_face
             noface = new_noface
         
+        # a bit of an optimization to avoid multiple conversion between ndarray
+        # and PIL.Image structures
+        face   = Image.fromarray(cv2.cvtColor(face, cv2.COLOR_BGR2RGB))
+        noface = Image.fromarray(cv2.cvtColor(noface, cv2.COLOR_BGR2RGB))
         for y, line in enumerate(text.split("\n")):
             face   = draw_text(face,   line, (0, y * 20 + 20), CONST_FONT, 16, color)
             noface = draw_text(noface, line, (0, y * 20 + 20), CONST_FONT, 16, color)
+        face   = cv2.cvtColor(np.array(face), cv2.COLOR_RGB2BGR)
+        noface = cv2.cvtColor(np.array(noface), cv2.COLOR_RGB2BGR)
         return face, noface
 
 
@@ -172,7 +177,7 @@ def tag():
                 f"female: {count_f}\n"
                 f"male  : {count_m}\n"
                 f"age   : {age_tag}\n"
-                +age_table(age_counter))
+                +age_table(age_counter, age_tag))
         frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
         key = chr(cv2.waitKey()).lower()
@@ -195,7 +200,7 @@ def tag():
                         f"female: {count_f}\n"
                         f"male  : {count_m}\n"
                         f"age   : {age_tag}\n"
-                        +age_table(age_counter))
+                        +age_table(age_counter, age_tag))
                 frame_face, frame_noface = redraw(img, faces, locations, color, text)
                 toggle_face = True
                 cv2.imshow("Tagger", frame_face)
