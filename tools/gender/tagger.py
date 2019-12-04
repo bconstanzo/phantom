@@ -113,6 +113,11 @@ def tag():
             lines[2].append(f"{age_counter['f'][idx]:{padding * 2 + 1}}")
             lines[3].append(f"{idx:^5}")
             lines[4].append(f"{'▲' if age == idx else ' ':^5}")
+        lines[0].append("Total")
+        lines[1].append(f"{sum(age_counter['m'][1:]): 5}")
+        lines[2].append(f"{sum(age_counter['f'][1:]): 5}")
+        lines[3].append(f"{sum(age_counter['m'][1:]) + sum(age_counter['f'][1:]): 5}")
+
         ret = ["|".join(l) if i < 3 else " ".join(l) for i, l in enumerate(lines)]
         return "\n".join(ret)
 
@@ -158,8 +163,8 @@ def tag():
 
     tagged = []
     age_counter = {
-        "m": { i: 0 for i in range(9) },
-        "f": { i: 0 for i in range(9) },
+        "m": [ 0 for i in range(9) ],
+        "f": [ 0 for i in range(9) ],
     }
 
     count_f = 0
@@ -173,10 +178,9 @@ def tag():
             continue
         toggle_face = True
         age_tag = 0
-        text = (f"total : {count_f + count_m}\n"
-                f"female: {count_f}\n"
-                f"male  : {count_m}\n"
-                f"age   : {age_tag}\n"
+        text = (f"f: {count_f} "
+                f"m: {count_m} "
+                f"(total: {count_f + count_m})\n\n"
                 +age_table(age_counter, age_tag))
         frame_face, frame_noface = redraw(img, faces, locations, color, text)
         cv2.imshow("Tagger", frame_face)
@@ -196,10 +200,9 @@ def tag():
                     toggle_face = True
             if key in "12345678":
                 age_tag = int(key)
-                text = (f"total : {count_f + count_m}\n"
-                        f"female: {count_f}\n"
-                        f"male  : {count_m}\n"
-                        f"age   : {age_tag}\n"
+                text = (f"f: {count_f} "
+                        f"m: {count_m} "
+                        f"(total: {count_f + count_m})\n\n"
                         +age_table(age_counter, age_tag))
                 frame_face, frame_noface = redraw(img, faces, locations, color, text)
                 toggle_face = True
