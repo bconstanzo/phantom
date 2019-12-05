@@ -237,10 +237,11 @@ def load_tagged(path):
     with open(path) as filehandle:
         _header = filehandle.readline()
         for line in filehandle:
-            path, tag, age_tag = line.strip().split(",")
+            path, tag, age_tag = line.strip().rsplit(",", 2)
             tag = int(tag)
+            age_tag = int(age_tag)
             img = cv2.imread(path)
-            tagged.append(TaggedFace(tag, path, img))
+            tagged.append(TaggedFace(tag, age_tag, path, img))
     return tagged
 
 
@@ -251,7 +252,7 @@ def save_tagged(tagged, path):
     :param tagged: list of TaggedFace
     :param path: file path to save to
     """
-    header = "path,tag\n"
+    header = "path,tag,age_tag\n"
     with open(path, "w") as filehandle:
         filehandle.write(header)
         for t in tagged:
