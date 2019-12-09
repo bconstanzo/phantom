@@ -68,8 +68,9 @@ _path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_res
 if dlib.__version__.startswith("19.8"):
     _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
 else:
-    _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
-    _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1b.dat")
+    _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
+    _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1c.dat")
+_path_age_model = resource_filename("phantom", "models/phantom_age_model_v1.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
@@ -80,6 +81,9 @@ lazy_vars.register(
 )
 lazy_vars.register(
     "face_encoder", dlib.face_recognition_model_v1, _path_encoder
+)
+lazy_vars.register(
+    "age_model", _unpickle, _path_age_model
 )
 #face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
 lazy_vars.register(
@@ -389,6 +393,17 @@ def compare(face1, face2):
     :return: float, distance between `face1` and `face2`
     """
     return np.linalg.norm(face1 - face2)
+
+
+def estimate_age(face):
+    """
+    Estimates the age of a person based on a facial encoding.
+
+    :param face: dlibs 128-long face encoding
+    """
+    age_model = lazy_vars.get("age_model")
+    face = face.reshape(1, -1)
+    return age_model.predict(face)
 
 
 def estimate_gender(face, *, multi=False):
