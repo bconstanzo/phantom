@@ -1,3 +1,5 @@
+import cv2
+import numpy as np
 
 # age tags
 # we define 8 ranges (plus one empty at position 0) fr
