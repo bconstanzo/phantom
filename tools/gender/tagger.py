@@ -12,6 +12,9 @@ import numpy as np
 import pickle
 
 
+from common import TaggedFace, age_tags, tags_female, tags_male
+
+
 from collections import defaultdict, namedtuple
 from itertools import cycle
 from phantom.faces import detect, encode, landmark
@@ -20,9 +23,9 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 # Here be ~dragons~ the part were you can tweak configs
-FLAG_TAG     = True
-FLAG_SAVE    = True
-FLAG_TRAIN   = False
+FLAG_TAG     = False
+FLAG_SAVE    = False
+FLAG_TRAIN   = True
 FLAG_TEST    = False
 PATH_TRAIN   = "d:/Test/dlib_faces_5points/sub_faces"
 PATH_TAGFILE = "./tagged_faces.csv"
@@ -30,23 +33,7 @@ PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
 CONST_FONT   = ImageFont.truetype("consola.ttf", 16)
 
-# age tags
-# we define 8 ranges (plus one empty at position 0) fr
-age_tags = [
-    (-1,  -1, "none"),   # this one is a formality, it isn't used
-    (0,    3, "baby"),
-    (4,    9, "child"),
-    (10,  13, "preteen"),
-    (14,  17, "teen"),
-    (18,  25, "young"),
-    (26,  40, "young adult"),
-    (41,  59, "adult"),
-    (60,  99, "elder"),
-]
-
 # and that's it for constants, now a few variables
-tags_female = +1
-tags_male   = -1
 tagged = []
 color_cycle = cycle([
     (255,   0,   0),
@@ -57,29 +44,6 @@ color_cycle = cycle([
     (255,   0, 255),
 ])
 
-
-# Classes/namedtuples
-class TaggedFace:
-    """
-    Class to hold the results from the tagging.
-    
-    Formerly a named tuple, the __repr__ method was annoying on the console.
-
-    :param tag: the gender tag assigned
-    :param path: path to the image file
-    :param img: cv2/numpy array with the loaded image
-    :param face: list of facial landmarks in the image, result of
-        `phantom.faces.detect()`
-    """
-    def __init__(self, tag, age_tag, path, img):
-        self.tag = tag
-        self.age_tag = age_tag
-        self.path = path
-        self.img = img
-    
-    def __repr__(self):
-        return (f"{self.__class__.__name__}"
-                f"(tag={self.tag}, age_tag={self.age_tag} path={self.path})")
 
 
 def draw_text(canvas, text, pos, font, size, color, *, shadow=True):
