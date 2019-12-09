@@ -12,7 +12,9 @@ import numpy as np
 import pickle
 
 
-from common import TaggedFace, age_tags, tags_female, tags_male
+from common import (
+    TaggedFace, age_tags, tags_female, tags_male, load_tagged, save_tagged
+)
 
 
 from collections import defaultdict, namedtuple
@@ -189,39 +191,6 @@ def tag():
         print(t)
     cv2.destroyAllWindows()
     return tagged
-
-
-def load_tagged(path):
-    """
-    Loads the tagged image data from a CSV file.
-
-    :return: list of TaggedFace
-    """
-    tagged = []
-    with open(path) as filehandle:
-        _header = filehandle.readline()
-        for line in filehandle:
-            path, tag, age_tag = line.strip().rsplit(",", 2)
-            tag = int(tag)
-            age_tag = int(age_tag)
-            img = cv2.imread(path)
-            tagged.append(TaggedFace(tag, age_tag, path, img))
-    return tagged
-
-
-def save_tagged(tagged, path):
-    """
-    Saves the tagged image data to a CSV file.
-
-    :param tagged: list of TaggedFace
-    :param path: file path to save to
-    """
-    header = "path,tag,age_tag\n"
-    with open(path, "w") as filehandle:
-        filehandle.write(header)
-        for t in tagged:
-            filehandle.write(f"{t.path},{t.tag},{t.age_tag}\n")
-    return None
 
 
 def train(tagged):
