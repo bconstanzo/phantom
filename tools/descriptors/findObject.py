@@ -6,6 +6,9 @@ from collections import defaultdict
 from sklearn.cluster import DBSCAN
 import math
 
+# tip:
+# * https://dsp.stackexchange.com/questions/1288/what-are-some-free-alternatives-to-sift-surf-that-can-be-used-in-commercial-app
+
 MIN_MATCH_COUNT = 10
 
 def find_matches(desc1, desc2, kps2):

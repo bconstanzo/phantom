@@ -2,9 +2,28 @@
 # 1.0
 (once a stable API is reached)
 
-## 0.7 (WIP)
+## 0.8 (WIP)
 + Improvements to face clustering.
-+ Object finding via image descriptors.
+
+## 0.7
+* Changes to models:
+  * Gender estimation model has been refined to cover a few edge cases and a
+    data augmentation approach has been taken.
+    * Since this model has been trained on par with the age estimation model,
+      performance is now generally better across all age ranges, though
+      particular cases have regressed.
+  * An age estimation model has been trained that works over facial encodings.
+  * `tools/gender/tagger.py` has been improved to support additional tags other
+    than gender (age and emotion have been applied for the new models).
+
+    New scripts have been added to `tools/gender`, to refactor the growing
+    `tagger.py` and move functionality out of it into separate, concise scripts.
+    There's work under way to further improve the current models.
+* Explored but not implemented (yet): object search via image descriptors.
+  * Didn't pan out since the best available descriptor is SIFT, but it's
+    patented. Check `phantom/tools/descriptors` for details.
+  * Alternatives to SIFT are available, and there could be potentially other
+    ways to do descriptor based search.
 
 ## 0.6
 * Keep reorganizing features:
