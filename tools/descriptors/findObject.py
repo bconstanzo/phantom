@@ -8,6 +8,12 @@ import math
 
 # tip:
 # * https://dsp.stackexchange.com/questions/1288/what-are-some-free-alternatives-to-sift-surf-that-can-be-used-in-commercial-app
+# 
+# Polygons and testing a point to see if it falls inside:
+# * https://stackoverflow.com/questions/13786088/determine-if-a-point-is-inside-or-outside-of-a-shape-with-opencv
+# * https://www.learnopencv.com/convex-hull-using-opencv-in-python-and-c/
+#   cv2.convexHull is used in the face morphing example to make the mask for
+#   the faces.
 
 MIN_MATCH_COUNT = 10
 
