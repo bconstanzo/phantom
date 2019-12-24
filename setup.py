@@ -31,7 +31,8 @@ setup(
     url = "https://github.com/bconstanzo/phantom",
     license = "LGPL 2.1",
     install_requires = [
-        "numpy", "scipy", "scikit-learn", "dlib", "opencv-python"
+        "numpy", "scipy", "scikit-learn", "dlib", 
+        #"opencv-python",  # you may need to comment this one for Anaconda compatibility
         ],
     python_requires='>=3.6',
     packages = find_packages(),
