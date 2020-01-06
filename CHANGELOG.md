@@ -5,6 +5,15 @@
 ## 0.8 (WIP)
 + Improvements to face clustering.
 
+## 0.7.2
+* Uploaded to PyPI.
+  * Removed the 68-point facial shape landmark model. It's coming back once we
+    get approved for larger project size at PyPI. You can download it from 
+    `tools`, manually place it on the `phantom/models` directory and then
+    patching `phantom/faces/faces.py` to load the correct model.
+
+  * Fixed issues with 0.7.1, which was meant to be the first PyPI version.
+
 ## 0.7
 * Changes to models:
   * Gender estimation model has been refined to cover a few edge cases and a

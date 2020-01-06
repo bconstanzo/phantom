@@ -15,10 +15,9 @@
 from setuptools import setup, find_packages
 import phantom
 
-long_desc = """"
-A library that allow working over images (from photographic, video or other
-source media) to find human faces, and work over them, for example to detect,
-encode, compare, or align with respect to them.
+long_desc = """
+A digital image processing library aimed at digital forensic experts, to help
+them work over photographic, video (or other source media) elements.
 """
 
 setup(

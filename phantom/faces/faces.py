@@ -72,7 +72,7 @@ else:
     _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1c.dat")
 _path_age_model = resource_filename("phantom", "models/phantom_age_model_v1.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
-_path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
+#_path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
 # scrub that -- lazy load them, with a lazy store
 lazy_vars = _LazyStore()
@@ -97,9 +97,10 @@ lazy_vars.register(
     "shape_predictor_5p", dlib.shape_predictor, _path_shape_5p
 )
 #shape_predictor_5p  = dlib.shape_predictor(_path_shape_5p)
-lazy_vars.register(
-    "shape_predictor_68p", dlib.shape_predictor, _path_shape_68p
-)
+# Commented out until we resolve directly uploading the model file. 
+#lazy_vars.register(
+#    "shape_predictor_68p", dlib.shape_predictor, _path_shape_68p
+#)
 #shape_predictor_68p = dlib.shape_predictor(_path_shape_68p)
 
 
@@ -210,6 +211,9 @@ class Shape68p(Shape):
             for point1, point2 in pairs:
                 cv2.line(img, point1, point2, color_, thickness=thick)
         return None
+# and now for a not quite nice, but necessary magic trick, we'll make the
+# Shape68p class an alias for the Shape5p class
+Shape68p = Shape5p
 
 
 class Face:
