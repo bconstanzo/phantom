@@ -178,7 +178,10 @@ class Shape68p(Shape):
     """
     def __init__(self, points):
         super().__init__(points)
-        self.model = lazy_vars.get("shape_predictor_68p")
+        # self.model = lazy_vars.get("shape_predictor_68p")
+        # lazy fix to get the project published in PyPI, then we can request
+        # more storage space
+        self.model = lazy_vars.get("shape_predictor_5p")
 
     def _make_dict(self):
         p = self.points
@@ -239,7 +242,7 @@ class Atlas:
     """
     A large grouping of facial encodings.
 
-    :param encodings: list of facial encodings
+    :param encodings: list of Face objects, which at least have an encoding
     :param path: the path to which the atlas will persist on disk
     """
     def __init__(self, elements, path):
