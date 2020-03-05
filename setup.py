@@ -23,7 +23,7 @@ them work over photographic, video (or other source media) elements.
 setup(
     name = "phantom",
     version = phantom.__version__,
-    description = "a library for working with faces in python",
+    description = "forensic digital image processing in python",
     long_description = long_desc,
     author = "Bruno Constanzo",
     author_email = "bconstanzo@ufasta.edu.ar",
