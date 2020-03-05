@@ -363,6 +363,22 @@ def landmark(img, *, locations=None, model=Shape68p, upsample=1):
     return [class_([(p.x, p.y) for p in face.parts()]) for face in shapelist]
 
 
+def normalize_landmark(shape):
+    """
+    Takes a Shape object and normalizes its values to the [-1, 1] range.
+
+    :param shape: Shape object (must have .points attribute)
+    :return: np.ndarray with the points normalized (rows of [x, y] values)
+    """
+    vector = np.array(land.points, dtype=np.float32)
+    min_v = np.min(vector, axis=0)  # min for both x and y at the same time
+    vector -= min_v
+    vector /= np.max(vector, axis=0)
+    vector -= np.array([0.5, 0.5]) 
+    vector *= 2  # keeps everything in range [-1, 1]
+    return vector
+
+
 def encode(img, *, locations=None, model=Shape68p, jitter=1):
     """
     Detects and encodes all the faces in an image.
