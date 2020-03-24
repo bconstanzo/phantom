@@ -4,6 +4,9 @@
 
 ## 0.8 (WIP)
 + Improvements to face clustering.
+  
+## 0.7.3
+* Restores the Shape68p model and fixes a few bugs.
 
 ## 0.7.2
 * Uploaded to PyPI.

@@ -67,12 +67,14 @@ def _unpickle(path):
 _path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_resnet_model_v1.dat")
 if dlib.__version__.startswith("19.8"):
     _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
+    _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
+    # TODO: cleanup and maybe retrain under dlib 19.8 or switch to scikit-learn SVM
 else:
     _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
     _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1c.dat")
 _path_age_model = resource_filename("phantom", "models/phantom_age_model_v1.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
-#_path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
+_path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
 # scrub that -- lazy load them, with a lazy store
 lazy_vars = _LazyStore()
@@ -98,9 +100,9 @@ lazy_vars.register(
 )
 #shape_predictor_5p  = dlib.shape_predictor(_path_shape_5p)
 # Commented out until we resolve directly uploading the model file. 
-#lazy_vars.register(
-#    "shape_predictor_68p", dlib.shape_predictor, _path_shape_68p
-#)
+lazy_vars.register(
+    "shape_predictor_68p", dlib.shape_predictor, _path_shape_68p
+)
 #shape_predictor_68p = dlib.shape_predictor(_path_shape_68p)
 
 
@@ -179,10 +181,7 @@ class Shape68p(Shape):
     """
     def __init__(self, points):
         super().__init__(points)
-        # self.model = lazy_vars.get("shape_predictor_68p")
-        # lazy fix to get the project published in PyPI, then we can request
-        # more storage space
-        self.model = lazy_vars.get("shape_predictor_5p")
+        self.model = lazy_vars.get("shape_predictor_68p")
 
     def _make_dict(self):
         p = self.points
@@ -211,9 +210,6 @@ class Shape68p(Shape):
             for point1, point2 in pairs:
                 cv2.line(img, point1, point2, color_, thickness=thick)
         return None
-# and now for a not quite nice, but necessary magic trick, we'll make the
-# Shape68p class an alias for the Shape5p class
-Shape68p = Shape5p
 
 
 class Face:
