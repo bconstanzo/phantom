@@ -366,8 +366,8 @@ def normalize_landmark(shape):
     :param shape: Shape object (must have .points attribute)
     :return: np.ndarray with the points normalized (rows of [x, y] values)
     """
-    vector = np.array(land.points, dtype=np.float32)
-    min_v = np.min(vector, axis=0)  # min for both x and y at the same time
+    vector  = np.array(shape.points, dtype=np.float32)
+    min_v   = np.min(vector, axis=0)  # min for both x and y at the same time
     vector -= min_v
     vector /= np.max(vector, axis=0)
     vector -= np.array([0.5, 0.5]) 
