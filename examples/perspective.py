@@ -1,3 +1,9 @@
+"""
+Tests geomtric measurements over images.
+
+---
+Made by: muramena
+"""
 from phantom.measures import *
 from matplotlib import pyplot as plt
 

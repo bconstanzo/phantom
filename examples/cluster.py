@@ -1,3 +1,11 @@
+"""
+Analyzes a directory of images, looking for faces. Each face found is encoded
+into a 128-vector space. Then all the faces are grouped by similarity in this
+space, using DBSCAN clustering.
+
+---
+Made by: bconstanzo
+"""
 # pylint: disable=E0001
 # pylint: disable=E1101
 

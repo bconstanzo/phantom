@@ -1,3 +1,9 @@
+"""
+Tests Lucy-Richardson deconvolution as implemented in phantom.
+
+---
+Made by: ayrton30
+"""
 import cv2
 import numpy as np
 

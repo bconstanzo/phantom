@@ -1,3 +1,14 @@
+"""
+Reads JPG files from a `needles` directory, calculates their perceptual hashes
+(configuragle via `hash` argument) and then goes over the `haystack` directory
+looking for (perceptually) similar images.
+
+Default thresholds are used, but can be tuned modifying the thresholds
+dictionary in the code.
+
+---
+Made by: bconstanzo
+"""
 import argparse
 import os.path
 
