@@ -4,7 +4,7 @@ import cv2
 
 
 from phantom.utils import draw_faces
-from phantom.faces import compare, encode, detect
+from phantom.faces import compare, encode, detect, estimate_age, age_tags
 
 known_faces = {
     "Bruno": "c:/test/phantom/tests/img4.jpg",
@@ -32,10 +32,15 @@ while True:
         for i, e in enumerate(encodings):
             for k, v in known_faces.items():
                 if compare(e, v) <= 0.6:
+                    age = estimate_age(e)[0]
+                    age_text = age_tags[age]
                     left, top, right, bottom = faces[i]
                     x = int (left * 0.5 + right * 0.5)
                     y = top
-                    cv2.putText(frame, k, (x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0))
+                    cv2.putText(frame, f"{k}", (x+1,y+1), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                    cv2.putText(frame, f"{age_text}", (x-19,y+21), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 0))
+                    cv2.putText(frame, f"{k}", (x,y), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
+                    cv2.putText(frame, f"{age_text}", (x-20,y+20), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0))
     cv2.imshow("Caras", frame)
     key = cv2.waitKey(1)
     if key == ord("q"):
