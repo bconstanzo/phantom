@@ -11,10 +11,10 @@ import numpy as np
 
 def lucy_richardson_deconv(img, num_iterations, sigmag):
     """" Lucy-Richardson Deconvolution Function
-    // input-1 img: NxM matrix image
-    // input-2 num_iterations: number of iterations
-    // input-3 sigma: sigma of point spread function (PSF)
-    // output result: deconvolution result
+    :param img: NxM matrix image
+    :param num_iterations: number of iterations
+    :param sigma: sigma of point spread function (PSF)
+    :return: deconvolution result
     """
 
     epsilon = 2.2204e-16
@@ -54,7 +54,7 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
         re_blurred = cv2.GaussianBlur(y, (int(win_size), int(win_size)), sigmag)
         re_blurred[(re_blurred <= 0)] = epsilon
 
-        cv2.divide(w_i, re_blurred, im_r, 1, cv2.CV_64F)  # couldn't get numpys divide to work yet
+        cv2.divide(w_i, re_blurred, im_r, 1, cv2.CV_32F)  # couldn't get numpys divide to work yet
         im_r = im_r + epsilon
 
         # applying Gaussian filter
