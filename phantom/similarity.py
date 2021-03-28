@@ -69,6 +69,7 @@ def p_hash(source):
     """
     gray = cv2.cvtColor(source, cv2.COLOR_BGR2GRAY)
     gray = cv2.resize(gray, (32, 32), interpolation=cv2.INTER_AREA)
+    # TODO: use cv2.dct() instead -- it's about 10x faster and simpler to call.
     gray = scipy.fftpack.dct(gray, type=2, axis=0)
     gray = scipy.fftpack.dct(gray, type=2, axis=1)
     average = np.median(gray[:8, :8])
