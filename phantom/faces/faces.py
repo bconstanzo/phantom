@@ -268,7 +268,6 @@ class Atlas:
         """
         with open(self.path, "rb") as fhandle:
             new_dict = pickle.load(fhandle)
-        self.__dict__.clear()
         self.__dict__.update(new_dict)
     
     def save(self):
