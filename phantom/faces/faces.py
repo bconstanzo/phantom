@@ -23,7 +23,9 @@ import pickle
 
 
 from pkg_resources import resource_filename
-from sklearn.cluster import DBSCAN, KMeans
+from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestCentroid
+from sklearn import metrics
 
 
 class _LazyStore:
@@ -251,8 +253,8 @@ class Atlas:
         self.groups    = None
         self.grouped   = False
         self.path      = path
-        self._dbscan   = DBSCAN(eps=0.475, min_samples=2)
-        self._kmeans   = None
+        self._db       = DBSCAN(eps=0.475, min_samples=2)
+        self._ncc      = NearestCentroid()
     
     def group(self):
         """
@@ -260,7 +262,20 @@ class Atlas:
         distinct groups. These can later be used to match new faces, or compare
         to other Atlases.
         """
-        pass
+        if not self.elements:
+            raise ValueError("Atlas doesn't have any elements to group")
+        db = self._db
+        faces = [f.encoding for f in self.elements]
+        db = db.fit(faces)
+        s_scores = metrics.silhouette_samples([e.encoding for e in self.elements], db.labels_)
+        labeled_faces = (
+            (f, l)
+            for f, l, s in zip(faces, db.labels_, s_scores)
+            if l >= 0 and s >= 0.20)
+        # we'll only NCC the clusters that have well-defined silhuoette metric
+        faces, labels = [list(x) for x in zip(*labeled_faces)]
+        self._ncc.fit(faces, labels)
+
     
     def load(self):
         """
