@@ -1,5 +1,4 @@
 import phantom.align
-import phantom.clustering
 import phantom.enhance
 import phantom.faces
 import phantom.geometry
