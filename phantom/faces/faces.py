@@ -255,6 +255,7 @@ class Atlas:
         self.path      = path
         self._db       = DBSCAN(eps=0.475, min_samples=2)
         self._ncc      = NearestCentroid()
+        self._ncc_map  = {}
     
     def group(self):
         """
@@ -275,6 +276,24 @@ class Atlas:
         # we'll only NCC the clusters that have well-defined silhuoette metric
         faces, labels = [list(x) for x in zip(*labeled_faces)]
         self._ncc.fit(faces, labels)
+        self._ncc_map = { c: i for (i, c) in enumerate(self._ncc.classes_)}
+
+    def predict(self, needles):
+        """
+        Quickly search the faces (encodings) in `needles` against the grouped
+        centroids. This gives an extremely fast way of approximate search over
+        the grouped faces.
+        """
+        ret = []
+        ncc = self._ncc
+        ncc_map = self._ncc_map
+        results = ncc.predict(needles)
+        for class_, needle in zip(results, needles):
+            idx = ncc_map[class_]
+            centroid = self._ncc.centroids_[idx]
+            distance = compare(needle, centroid)
+            ret.append((class_, distance))
+        return ret
 
     
     def load(self):
