@@ -9,6 +9,7 @@ import cv2
 import dlib
 import glob
 import numpy as np
+import phantom
 import pickle
 
 
@@ -241,6 +242,7 @@ def test():
 
 
 def main():
+    print(f"Using phantom {phantom.__version__}")
     if FLAG_TAG:
         print("Tagging...")
         tagged = tag()
