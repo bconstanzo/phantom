@@ -5,6 +5,10 @@
 
 # these are actually pickles, but we want to keep them appart
 *.atlas
+# line profiler files
+*.lprof
+# tools/gender intermediate models should be ignored too:
+tools/gender/*.pickle
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
