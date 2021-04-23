@@ -339,7 +339,7 @@ def _tuple_to_rect(t):
     return dlib.rectangle(*t)
 
 
-def detect(img, *, upsample=1):
+def detect(img, *, bgr=True, upsample=1):
     """
     Detects faces present in an image.
 
@@ -350,11 +350,13 @@ def detect(img, *, upsample=1):
         smaller faces
     :return: list of tuples (left, top, right, bottom) with each face location
     """
+    if bgr:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     face_detector = lazy_vars.get("face_detector")
     return [_rect_to_tuple(r) for r in face_detector(img, upsample)]
 
 
-def landmark(img, *, locations=None, model=Shape68p, upsample=1):
+def landmark(img, *, bgr=True, locations=None, model=Shape68p, upsample=1):
     """
     Detects the facial landmarks of each face present in an image.
 
@@ -369,8 +371,10 @@ def landmark(img, *, locations=None, model=Shape68p, upsample=1):
     :return: list of `phantom.faces.Shape` objects, each describing the position
         and landmarks of every face
     """
+    if bgr:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     if locations is None:
-        locations = detect(img, upsample=upsample)
+        locations = detect(img, bgr=False, upsample=upsample)
     class_ = model
     shaper = model([(i, i) for i in range(68)])
     model = shaper.model  # TODO: might want to improve the names here
@@ -394,7 +398,7 @@ def normalize_landmark(shape):
     return vector
 
 
-def encode(img, *, locations=None, model=Shape68p, jitter=1):
+def encode(img, *, bgr=True, locations=None, model=Shape68p, jitter=1):
     """
     Detects and encodes all the faces in an image.
 
@@ -408,8 +412,10 @@ def encode(img, *, locations=None, model=Shape68p, jitter=1):
         re-run the encoding. Higher jitter makes for slightly better encodings,
         though it slows down the encoding.
     """
+    if bgr:
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     if locations is None:
-        locations = detect(img)
+        locations = detect(img, bgr=False)
     shaper = model([(i, i) for i in range(68)])
     model = shaper.model  # once again this shadowing...
     face_encoder = lazy_vars.get("face_encoder")
