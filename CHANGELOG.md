@@ -2,9 +2,36 @@
 # 1.0
 (once a stable API is reached)
 
-## 0.8 (WIP)
-+ Improvements to face clustering.
-  
+## 0.8.0
+* Improvements to face clustering. `faces.Atlas` now includes `.group()` and
+  `.predict()` that work together to group all the faces in an atlas (using
+  DBSCAN clustering with reasonable defaults) and then you can match new faces
+  against those clusters (done through a Nearest Centroid Classifier, built from 
+  the groups found beforehand).
+    * This implementations are going to be improved upon in following versions.
+      Currently, they work for small-to-medium datasets (a couple hundred 
+      people over thousands of images), but they lose accuracy over larger
+      datasets (thousands of people over tens of thousands of images).
+    * Moving forward, a different implementation of facial encodings might be
+      necessary to overcome the current limitations.
+* New feature: face landmark normalization that can be used as a helper for
+  different tasks.
+  * There's no example script yet, but you can see `tools/emotions` for details.
+* In the `faces` module, `detect()`, `landmark()` and `encode()` functions now
+  transparently convert images from BGR to RGB to run the corresponding models.
+  Previously this had to be done by hand, and when not performed it'd lead to
+  a slight accuracy loss in the models (particularly the encoding model suffered
+  from this).
+  * This issue arises from the fact that OpenCV stores in memory the images in
+    BGR order and most other software assumes RGB. If were doing the conversion
+    by hand, you can use the set the keyword-only flag `bgr=False` when calling
+    or you can remove the conversion entirely and let the functions handle it.
+    Speed and memory-wise the impact of doing the conversions is small.
+* Making `phantom-models` a separate PyPI project is still in the plans, but the
+  fact that we're considering changing the dlib models we're currently using for
+  other implementations means there will be changes. For the moment 0.8.0 is a
+  GitHub only release.
+
 ## 0.7.3
 * Restores the Shape68p model and fixes a few bugs.
 
