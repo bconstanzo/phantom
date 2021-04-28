@@ -74,7 +74,7 @@ if dlib.__version__.startswith("19.8"):
 else:
     _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
     _path_gender_1b   = resource_filename("phantom", "models/phantom_gender_model_v1c.dat")
-_path_age_model = resource_filename("phantom", "models/phantom_age_model_v1.dat")
+_path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.dat")
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
