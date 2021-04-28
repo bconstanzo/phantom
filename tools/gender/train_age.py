@@ -13,6 +13,7 @@ PATH_TAGGED = "tagged_faces.csv"
 
 
 def main():
+    print(f"Using phantom {phantom.__version__}")
     print("Loading tagged data...")
     t0 = datetime.datetime.now()
     tagged = load_tagged(PATH_TAGGED)

@@ -32,11 +32,12 @@ class TaggedFace:
     :param face: list of facial landmarks in the image, result of
         `phantom.faces.detect()`
     """
-    def __init__(self, tag, age_tag, path, img):
+    def __init__(self, tag, age_tag, path, img, enc=None):
         self.tag = tag
         self.age_tag = age_tag
         self.path = path
         self.img = img
+        self.enc = enc
     
     def __repr__(self):
         return (f"{self.__class__.__name__}"
