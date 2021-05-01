@@ -91,9 +91,6 @@ lazy_vars.register(
 lazy_vars.register(
     "gender_model", _unpickle, _path_gender
 )
-lazy_vars.register(
-    "gender_model_1b", _unpickle, _path_gender_1b
-)
 #gender_model        = _unpickle(_path_gender)
 lazy_vars.register(
     "shape_predictor_5p", dlib.shape_predictor, _path_shape_5p
