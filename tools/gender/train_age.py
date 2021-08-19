@@ -12,13 +12,7 @@ from sklearn import svm, metrics
 PATH_TAGGED = "tagged_faces.csv"
 
 
-def main():
-    print(f"Using phantom {phantom.__version__}")
-    print("Loading tagged data...")
-    t0 = datetime.datetime.now()
-    tagged = load_tagged(PATH_TAGGED)
-    print("Preparing data...")
-    t1 = datetime.datetime.now()
+def load_data(tagged):
     X = []
     y = []
     for t in tagged:
@@ -27,6 +21,17 @@ def main():
         y.append(t.age_tag)
     X = np.array(X)
     y = np.array(y)
+    return X, y
+
+
+def main():
+    print(f"Using phantom {phantom.__version__}")
+    print("Loading tagged data...")
+    t0 = datetime.datetime.now()
+    tagged = load_tagged(PATH_TAGGED)
+    print("Preparing data...")
+    t1 = datetime.datetime.now()
+    X, y = load_data(tagged)
     print("Training sklearn.svm.SVC...")
     t2 = datetime.datetime.now()
     clf = svm.SVC(kernel="linear", C=6.25, gamma=0.01)
