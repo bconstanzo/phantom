@@ -9,12 +9,12 @@ Made by: bconstanzo
 # pylint: disable=E0001
 # pylint: disable=E1101
 
+import numpy as np
 import cv2
 import sys
 import datetime
 import dlib
 import glob
-import numpy as np
 import os
 
 
