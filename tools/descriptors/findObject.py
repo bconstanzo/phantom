@@ -281,8 +281,8 @@ def find_object_in_directory(img1, path, e=0.025, drawKM=False):
 # ------------------------------------------------------- #
 
 # EXAMPLE WITH ONE IMAGE
-""" img1 = cv2.imread('C:/InfoLab/Python/find-object/img/libro.jpeg')
-img2 = cv2.imread('C:/InfoLab/Python/find-object/img/completa.jpeg')
+""" img1 = cv2.imread('Imagenes de prueba/libro.jpeg')
+img2 = cv2.imread('Imagenes de prueba/completa.jpeg')
 number, img = find_object_in_image(img1, img2, drawKM=True)
 
 if number > 0:
@@ -294,8 +294,8 @@ else:
     print('The object is not in the image') """
 
 # EXAMPLE WITH A DIRECTORY
-""" img1 = cv2.imread('C:/InfoLab/Python/find-object/img/libro.jpeg')
-path = 'C:/InfoLab/Python/find-object/img/*.jpg'
+img1 = cv2.imread('Imagenes de prueba/libro.jpeg')
+path = 'Imagenes de prueba/*.jpg'
 res = find_object_in_directory(img1, path, drawKM=True)
 
 for i, (number, img) in enumerate(res):
@@ -303,4 +303,4 @@ for i, (number, img) in enumerate(res):
         print('Object found ' + str(number) + ' times')
         cv2.imwrite(f'C:/InfoLab/Python/find-object/res/{i} - encontrado {str(number)}.jpg', img)
     else:
-        print('The object is not in the image') """
+        print('The object is not in the image')
