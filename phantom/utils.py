@@ -10,6 +10,34 @@ import matplotlib.pyplot as plt
 from itertools import cycle
 
 
+# TODO: think a better place for this function that helps in detecting forgeries
+def jpg_ghosts(img, qualities=[50, 60, 70, 80, 90, 100]):
+    """
+    Implements the JPG Ghosts algorithm as described by Hany Farid.
+
+    Writes images to disk in the current location that are different compression
+    levels of the parameter `img` such that you can see the "ghost" of parts
+    where the image shows different JPG compression levels. Read the paper
+    for further details.
+
+    :param img: cv2/np.ndarray image
+    :param name: base name to save the different compression level images
+    :param qualities: (optional) list of ints between 0 and 100, for the
+        different compression levels that will be saved
+    """
+    ret = []
+    for q in qualities:
+        aux_bytes = cv2.imencode(".jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), q])
+        aux_img = cv2.imdecode(aux_bytes[1], -1)
+        diff = img.astype(np.float32) - aux_img
+        diff = np.abs(diff)
+        diff /= diff.max()
+        diff *= 255
+        diff = diff.astype(np.uint8)
+        ret.append(diff)
+    return ret
+
+
 def color_correct(base, dest, baselm):
     """
     Modifies `dest` colors to approximately match `base`s.
