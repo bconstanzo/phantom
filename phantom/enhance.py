@@ -5,6 +5,14 @@ Image enhancement algorithms.
 import cv2
 import numpy as np
 
+# TODO: explore notch filters for moire artifact removal.
+#       references:
+#       * https://ijournals.in/wp-content/uploads/2017/07/5.3106-Khanjan.compressed.pdf
+#       * https://ietresearch.onlinelibrary.wiley.com/doi/10.1049/iet-ipr.2018.5707
+#       * https://eej.aut.ac.ir/article_94_befd8a642325852c3a0d41ece10b3feb.pdf
+#       * https://arxiv.org/abs/1701.09037
+#       * (OpenCV 3.4) https://docs.opencv.org/3.4.15/d2/d0b/tutorial_periodic_noise_removing_filter.html
+
 # TO READ:
 # * http://onsignalandimageprocessing.blogspot.com/2017/02/lucy-richardson-deconvolution.html
 

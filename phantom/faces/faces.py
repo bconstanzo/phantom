@@ -15,6 +15,9 @@ https://github.com/davisking/dlib-models
 # pylint: disable=E1101
 #   - because of pylint not recognizing dlib.face_recognition_model_v1
 
+# TODO: explore using ONNX runtime or OpenCVs .dnn module for face detection
+# TODO: explore training a custom convnet for facial frontalization
+
 
 import cv2
 import dlib
@@ -278,6 +281,8 @@ class Atlas:
         Quickly search the faces (encodings) in `needles` against the grouped
         centroids. This gives an extremely fast way of approximate search over
         the grouped faces.
+
+        :param needles: 
         """
         ret = []
         ncc = self._ncc
