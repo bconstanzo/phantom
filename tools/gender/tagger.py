@@ -25,7 +25,7 @@ from phantom.utils import draw_faces
 from PIL import Image, ImageDraw, ImageFont 
 
 
-# Here be ~dragons~ the part were you can tweak configs
+# Here be ~dragons~ the part where you can tweak configs
 FLAG_TAG     = False
 FLAG_SAVE    = False
 FLAG_TRAIN   = True
