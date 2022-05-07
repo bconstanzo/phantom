@@ -158,8 +158,7 @@ def image_grid(images, grid, *, borders=False, colors=None, text_index=False,
         colors = [(255, 0, 0)] * len(images)
     size_w, size_h = size
     ret = np.zeros((grid_h * size_h, grid_w * size_w, 3))  # TODO: generalize to grayscale images
-    for idx, packed in enumerate(zip(images, colors)):
-        img, color = packed  # didn't find a better way yet -- not happy about it
+    for idx, (img, color) in enumerate(zip(images, colors)):
         img_copy = img.copy()
         if text_index:
             cv2.putText(img_copy, str(idx), (7, 15), cv2.FONT_HERSHEY_SIMPLEX, 0.5, color)
