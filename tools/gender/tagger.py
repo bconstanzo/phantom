@@ -5,10 +5,10 @@ binary classifier (to detect gender).
 # pylint: disable=E1101
 #   - because of pylint not recognizing dlib.svm_c_trainer_radial_basis
 
+import numpy as np
 import cv2
 import dlib
 import glob
-import numpy as np
 import phantom
 import pickle
 

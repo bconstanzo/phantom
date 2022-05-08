@@ -1,6 +1,6 @@
+import numpy as np
 import cv2
 import datetime
-import numpy as np
 import phantom
 import pickle
 
