@@ -13,7 +13,44 @@ aimed at making the examples easier to understand.s
 import cv2
 
 
+from concurrent.futures import ThreadPoolExecutor
 from itertools import cycle
+
+
+def threaded_videocap_read(cap):
+    return cap.read()
+
+
+class VideoThreaded:
+    def __init__(self, path):
+        """
+        Iterable video class, it allows writing code of the form:
+
+            >>> vid = phantom.video.Video(path_to_file)
+            >>> for frame in vid:
+            >>>     process(frame)
+        
+        Offloads reading to a separate thread. When reading from files it may
+        speed processing quite a bit.
+
+        :param path: path to the video.
+        """
+        self.path = path
+    
+    def __iterator(self):
+        with ThreadPoolExecutor(1) as pool:
+            cap = cv2.VideoCapture(self.path)
+            status, frame = cap.read()
+            while status:
+                future_result = pool.submit(threaded_videocap_read, cap)
+                yield frame
+                # status, frame = cap.read()
+                status, frame = future_result.result()
+            cap.release()
+    
+    def __iter__(self):
+        return self.__iterator()
+
 
 
 class Video:
