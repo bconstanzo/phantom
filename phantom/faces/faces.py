@@ -72,12 +72,13 @@ def _unpickle(path):
 
 # paths for the model files
 _path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_resnet_model_v1.dat")
-if dlib.__version__.startswith("19.8"):
+dlib_ver = dlib.__version__
+if dlib_ver.startswith("19.8"):
     _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
     # TODO: cleanup and maybe retrain under dlib 19.8 or switch to scikit-learn SVM
-elif dlib.__version__.startswith("19.16"):
+elif dlib_ver.startswith("19.16"):
     _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
-elif dlib.__version__.startswith("19.23"):
+elif dlib_ver.startswith("19.23") or dlib_ver.startswith("19.24"):
     _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.1.dat")
 else:
     # we load the latest model, but warn that it may not work properly
