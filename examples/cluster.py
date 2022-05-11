@@ -33,12 +33,12 @@ C_LOAD_ATLAS = False
 C_SAVE_ATLAS = True
 
 # ...and variables
-path  = r"D:\Storage-post-SSD\Wapp\WhatsApp Images"
-path  = r"D:\Storage-post-SSD\gender\test\small"  # keeping the other path as a stress-test
+path  = r"C:\Test\infoconf2019\imagenes\fotos_full"
+# path  = r"C:\Test\infoconf2019\imagenes\cluster"  # keeping the other path as a stress-test
 
 procs = 3
 DEBUG_TIMER = True
-output_folder_path = r"D:\Storage-post-SSD\gender\cluster_test"
+output_folder_path = r"C:\Test\infoconf2019\imagenes\cluster"
 
 
 def read_and_find(path):

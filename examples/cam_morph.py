@@ -39,7 +39,8 @@ while True:
         mask = cv2.fillConvexPoly(
             np.zeros(frame.shape, dtype=np.float32),
             np.int32([faces_points[int(i)] for i in points]),
-            (0.5, 0.5, 0.5))
+            (0.5, 0.5, 0.5)
+        )
         #m2 = (mask * morphed).astype(np.uint8)
         #morphed = color_correct(frame, morphed, faces[0])
     else:
