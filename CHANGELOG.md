@@ -2,6 +2,23 @@
 # 1.0
 (once a stable API is reached)
 
+## 0.8.2:
+* New feature: `utils.jpg_ghosts` feature, may help looking for signs of editing
+  on JPG-compressed images.
+* New feature: `video.VideoThreaded` class, uses a separate thread to offload
+  reads to it. It can speed up quite a bit when reading from a video file.
+* Fixed portability and ease of install issues.
+* Fixed a few bugs.
+  * We've detected a few instances in which importing cv2 before importing
+  numpy, when using Christoph Gohlke's OpenCV wheels can raise an ImportError
+  ("DLL load failed while importing cv2: The specified module could not be
+  found."). However, if you import numpy beforehand, everything works as
+  expected.
+    * We have just moved numpy imports up top the modules to avoid this error,
+    slightly breaking our "imports go in alphabetical order" rule.
+    * If you find yourself in that situation, double check the order of imports.
+* Updated models for dlib 19.23 & 19.24, and added the logic to use them.
+
 ## 0.8.0
 * Improvements to face clustering. `faces.Atlas` now includes `.group()` and
   `.predict()` that work together to group all the faces in an atlas (using
