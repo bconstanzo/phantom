@@ -14,12 +14,12 @@ forensic image processing in python
 Since Windows tends to be a bit harder to get things working on, we have
 compiled this instructions to get you going:
 
-1. Get latest Python 3.6.x.
+1. Get latest Python 3.10.x.
 2. Install Numpy, Scipy, OpenCV, scikit-learn, and matplotlib (in that order)
    from Christoph Gohlkes wheels at https://www.lfd.uci.edu/~gohlke/pythonlibs/.
-3. We've compiled dlib 19.16.0 with AVX for Python 3.6 on Windows 64 bits. You
-   can find it in the /tools directory. Compared to non-AVX version, it's about
-   2.5 times faster.
+3. We've compiled dlib 19.16.0 and 19.23.0 with AVX for Python 3.6 on Windows
+   64 bits. You can find it in the /tools directory. Compared to non-AVX
+   version, it's about 2.5 times faster.
 
     Dlib is developed and maintained by Davis E. King. Check www.dlib.net and
     https://github.com/davisking/dlib.
@@ -30,11 +30,16 @@ compiled this instructions to get you going:
    __We don't recommend this, and will eventually drop support for older
    versions of dlib__.
 
-Linux and macOS should be easier. If you have problems, point us at it so that
-we can work out detailed instructions.
+Linux and macOS are simpler:
 
-Open a console and go to the directory where you've cloned phantom. Run
-`python setup.py install`.
+1. Open a console and go to the directory where you've cloned phantom.
+2. Run `pip install -r requirements.txt`.
+3. Run `python setup.py install`.
+
+You'll need (and most probably already have installed) the platform compiler and
+it will build a the dependencies as it installs them. This method also works on
+Windows, but it's less probable that you'll have a proper build environment
+already set up, and you'll end up with a lower performance installation.
 
 ## Notes
 * When usign our compiled dlib wheel, you may get a puzzling ImportError when
