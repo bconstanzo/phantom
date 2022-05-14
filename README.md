@@ -2,13 +2,13 @@
 forensic image processing in python
 
 ## Requirements
-* Python 3.6.x
+* Python 3.10.x (3.6.x+ still supported, but recommend latest)
 * NumPy 1.15+
 * scipy 1.2.1+
 * matplotlib
-* scikit-learn 0.20+
-* OpenCV 4+
-* dlib 19.16 (19.8.1 still works)
+* scikit-learn 1.0+
+* OpenCV 4.5+
+* dlib 19.23+ (19.16 and 19.8 still work)
 
 ## Installing on Windows
 Since Windows tends to be a bit harder to get things working on, we have
