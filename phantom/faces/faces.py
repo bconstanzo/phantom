@@ -90,7 +90,7 @@ else:
 
 if sklearn.__version__.startswith("0.20"):
     _path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.dat")
-elif sklearn.__version__.startswith("1.0"):
+elif sklearn.__version__.startswith("1.0") or sklearn.__version__.startswith("1.1"):
     _path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.1.dat")
 else:
     # same as before, load latest model and warn
