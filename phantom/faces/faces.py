@@ -244,12 +244,12 @@ class Face:
     In time we may use this class to transparently replace some conventions of
     phantom.
 
-    :param landmark: a Shape object, that describes the landmarks of the face
     :param encoding: a 128-d vector encoding for a face
     :param image: an np.ndarray/cv2 image
     :param origin: path to a file
-    :param landmarks: Shape object for the face
-    :param location: location of a face within origin
+    :param landmark: a Shape object, that describes the landmarks of the face
+    :param location: location as (left, top, right, bottom) of a face within
+        origin
     """
     # TODO: lazy loading of images from origin
     # TODO: extend the landmark parameter so it's a list/dict of Shapes?
@@ -266,7 +266,7 @@ class Atlas:
     """
     A large grouping of facial encodings.
 
-    :param encodings: list of Face objects, which at least have an encoding
+    :param elements: list of Face objects, which at least have an encoding
     :param path: the path to which the atlas will persist on disk
     """
     def __init__(self, elements, path):
@@ -285,6 +285,7 @@ class Atlas:
         distinct groups. These can later be used to match new faces, or compare
         to other Atlases.
         """
+        # TODO: should method be called .fit() instead of .group() ?
         if not self.elements:
             raise ValueError("Atlas doesn't have any elements to group")
         db = self._db
@@ -306,7 +307,7 @@ class Atlas:
         centroids. This gives an extremely fast way of approximate search over
         the grouped faces.
 
-        :param needles: 
+        :param needles: list of 128-d vector encoding for a face
         """
         ret = []
         ncc = self._ncc
