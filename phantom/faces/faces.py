@@ -278,8 +278,9 @@ class Atlas:
         self._db       = DBSCAN(eps=0.475, min_samples=2)
         self._ncc      = NearestCentroid()
         self._ncc_map  = {}
+        self._labeled_faces = []
     
-    def group(self):
+    def fit(self, *, do_grouping=True):
         """
         Used clustering algorithms to group all the faces of the Atlas into
         distinct groups. These can later be used to match new faces, or compare
@@ -292,12 +293,16 @@ class Atlas:
         faces = [f.encoding for f in self.elements]
         db = db.fit(faces)
         s_scores = metrics.silhouette_samples([e.encoding for e in self.elements], db.labels_)
-        labeled_faces = (
+        self.labeled_faces = (
             (f, l)
             for f, l, s in zip(faces, db.labels_, s_scores)
             if l >= 0 and s >= 0.20)
+        if do_grouping:  # not totally convinced about this
+            self.group()
+    
+    def group(self):    
         # we'll only NCC the clusters that have well-defined silhuoette metric
-        faces, labels = [list(x) for x in zip(*labeled_faces)]
+        faces, labels = [list(x) for x in zip(*self.labeled_faces)]
         self._ncc.fit(faces, labels)
         self._ncc_map = { c: i for (i, c) in enumerate(self._ncc.classes_)}
 
