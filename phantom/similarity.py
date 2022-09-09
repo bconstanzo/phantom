@@ -11,6 +11,14 @@ Hashing techniques aplicable to images.
 # * HoOG
 # * 
 # 
+# TODO: change the names of a_hash, d_hash, and p_hash for more evident/clear
+#       names (avg_hash, diff_hash, and dct_hash?)
+# TODO: check results from https://github.com/alt-text-org/image-algo-testing
+#       and evaluate extending the hash definitions (maybe class-based + 
+#       __call__ magic?)
+# TODO: wavelet-hash was commented out a long time ago and never came back,
+#       check if we can calculate the wavelets without including a new
+#       dependency
 
 import cv2
 import numpy as np
