@@ -286,7 +286,11 @@ class Atlas:
         distinct groups. These can later be used to match new faces, or compare
         to other Atlases.
         """
-        # TODO: should method be called .fit() instead of .group() ?
+        # TODO: .fit() in most APIs takes X and Y parameters, we're getting
+        #    the training data as attributes for the class already -- maybe
+        #    we can think a different signature? does it make sense to take an
+        #    X parameter here?
+        # TODO: reconsider the do_grouping parameter, not yet convinced
         if not self.elements:
             raise ValueError("Atlas doesn't have any elements to group")
         db = self._db
@@ -300,7 +304,13 @@ class Atlas:
         if do_grouping:  # not totally convinced about this
             self.group()
     
-    def group(self):    
+    def group(self):
+        """
+        Sets up the Nearest Centroid classifier so predictions can be made
+        of new encodings against the found (or eventually edited) clusters.
+
+        Should always be run after calling `Atlas.group()`.
+        """  
         # we'll only NCC the clusters that have well-defined silhuoette metric
         faces, labels = [list(x) for x in zip(*self.labeled_faces)]
         self._ncc.fit(faces, labels)
