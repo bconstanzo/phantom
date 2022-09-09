@@ -40,6 +40,8 @@ def lucy_richardson_deconv(img, num_iterations, sigmag, *, clip=True):
     epsilon = 2.2204e-16
     win_size = 8 * sigmag + 1   # Window size of PSF
 
+    dtype = img.dtype
+
     if img.dtype == "uint8":
         clip_max = 255
         clip_min = 0
@@ -98,4 +100,4 @@ def lucy_richardson_deconv(img, num_iterations, sigmag, *, clip=True):
         t1 = j1 - y
 
     result = _clip(j1.copy(), clip_min, clip_max)
-    return result
+    return result.astype(dtype)
