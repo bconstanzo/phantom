@@ -16,17 +16,40 @@ import numpy as np
 # TO READ:
 # * http://onsignalandimageprocessing.blogspot.com/2017/02/lucy-richardson-deconvolution.html
 
+def _clip(img, lower, higher):
+    """
+    Clips an image in between two bounds.
 
-def lucy_richardson_deconv(img, num_iterations, sigmag):
-    """" Lucy-Richardson Deconvolution Function
-    :param img: NxM matrix image
+    :param img: cv2/np.ndarray image
+    :param lower: lower bound, usually 0
+    :param higher: higher bound, either 255 for uint8 images or 1.0 for floats
+    """
+    return np.maximum(lower, np.minimum(img, higher))
+
+
+def lucy_richardson_deconv(img, num_iterations, sigmag, *, clip=True):
+    """"
+    Lucy-Richardson Deconvolution.
+
+    :param img: cv2/np.darray imge
     :param num_iterations: number of iterations
-    :param sigma: sigma of point spread function (PSF)
+    :param sigma: sigma of (Gaussian) point spread function (PSF)
     :return: deconvolution result
     """
 
     epsilon = 2.2204e-16
     win_size = 8 * sigmag + 1   # Window size of PSF
+
+    if img.dtype == "uint8":
+        clip_max = 255
+        clip_min = 0
+    elif img.dtype == "uint16":
+        clip_max = 65535
+        clip_min = 0
+    else:
+        # we must have a float here
+        clip_max = 1.0
+        clip_min = 0.0
 
     # Initializations Numpy
     j1 = img.copy()
@@ -62,18 +85,17 @@ def lucy_richardson_deconv(img, num_iterations, sigmag):
         re_blurred = cv2.GaussianBlur(y, (int(win_size), int(win_size)), sigmag)
         re_blurred[(re_blurred <= 0)] = epsilon
 
-        cv2.divide(w_i, re_blurred, im_r, 1, cv2.CV_32F)  # couldn't get numpys divide to work yet
+        cv2.divide(w_i, re_blurred, im_r, 1, cv2.CV_64F)
         im_r = im_r + epsilon
 
         # applying Gaussian filter
         im_r = cv2.GaussianBlur(im_r, (int(win_size), int(win_size)), sigmag)
 
+        # updates before the next iteration
         j2 = j1.copy()
-        # print(f"{y.dtype}, {im_r.dtype}")
         j1 = y * im_r
-
         t2 = t1.copy()
         t1 = j1 - y
 
-    result = j1.copy()
+    result = _clip(j1.copy(), clip_min, clip_max)
     return result
