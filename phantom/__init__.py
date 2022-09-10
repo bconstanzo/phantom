@@ -8,6 +8,6 @@ import phantom.measures
 import phantom.similarity
 import phantom.utils
 import phantom.video
+from importlib.metadata import version
 
-__version__ = "0.8.3" 
-
+__version__ = version("phantom")
