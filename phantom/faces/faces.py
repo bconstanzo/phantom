@@ -271,10 +271,12 @@ class Atlas:
     """
     def __init__(self, elements, path):
         self.elements  = elements
+        self.path      = path
+        # TODO: it looks like both elements and path could (should?) be params
+        #       for specific method (elements in .fit(), path in .save()?)
         self.clusters  = {}
         self.groups    = None
         self.grouped   = False
-        self.path      = path
         self._db       = DBSCAN(eps=0.475, min_samples=2)
         self._ncc      = NearestCentroid()
         self._ncc_map  = {}
