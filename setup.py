@@ -10,10 +10,9 @@
 # General Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along with this program; if not,
-# write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA 
+# write to the Free Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 
 from setuptools import setup, find_packages
-import phantom
 
 long_desc = """
 A digital image processing library aimed at digital forensic experts, to help
@@ -21,22 +20,20 @@ them work over photographic, video (or other source media) elements.
 """
 
 setup(
-    name = "phantom",
-    version = phantom.__version__,
-    description = "forensic digital image processing in python",
-    long_description = long_desc,
-    author = "Bruno Constanzo",
-    author_email = "bconstanzo@ufasta.edu.ar",
-    url = "https://github.com/bconstanzo/phantom",
-    license = "LGPL 2.1",
-    install_requires = [
-        "numpy", "scipy", "scikit-learn", "dlib", 
-        #"opencv-python",  # you may need to comment this one for Anaconda compatibility
+    name="phantom",
+    version="0.8.3",
+    description="forensic digital image processing in python",
+    long_description=long_desc,
+    author="Bruno Constanzo",
+    author_email="bconstanzo@ufasta.edu.ar",
+    url="https://github.com/bconstanzo/phantom",
+    license="LGPL 2.1",
+    install_requires=[
+        "numpy", "scipy", "scikit-learn", "dlib",
+        # "opencv-python",  # you may need to comment this one for Anaconda compatibility
         ],
     python_requires='>=3.6',
-    packages = find_packages(),
-    #packages = ['phantom'],
+    packages=find_packages(),
     package_dir={'phantom': 'phantom'},
     package_data={'phantom': ['models/*.dat']},
-#
     )
