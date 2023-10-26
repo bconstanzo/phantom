@@ -5,7 +5,7 @@ import cv2
 
 from phantom.utils import draw_faces
 from phantom.faces import (
-    encode, detect, estimate_age, estimate_gender, age_tags,
+    encode, detect, estimate_age_onnx as estimate_age, estimate_gender, age_tags,
 )
 
 
@@ -22,7 +22,7 @@ while True:
     if faces:
         encodings = encode(frame, locations=faces)
         for i, e in enumerate(encodings):
-            age = estimate_age(e)[0]
+            age = estimate_age(e)[0][0]
             age_text = age_tags[age]
             gender = estimate_gender(e)
             gender_text = gender_name(gender)
@@ -37,5 +37,4 @@ while True:
     key = cv2.waitKey(1)
     if key == ord("q"):
         break
-
 video.release()
