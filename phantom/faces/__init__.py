@@ -3,6 +3,9 @@ from .faces import (
     Shape, Shape5p, Shape68p, Face, Atlas,
     # and now the functions
     detect, landmark, encode, compare, estimate_age, estimate_gender,
+    # we'll soon deprecate the old scikit-learn pickled models in favor of
+    # ONNX exported versions, for the time being both versions will coexist
+    estimate_age_onnx,
     normalize_landmark
     # and not much more for now
 )
