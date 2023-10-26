@@ -25,7 +25,7 @@ import numpy as np
 import pickle
 import sklearn
 import warnings
-
+import onnxruntime as rt
 
 from pkg_resources import resource_filename
 from sklearn.cluster import DBSCAN
@@ -58,6 +58,11 @@ class _LazyStore:
             raise KeyError("unregistered lazy key.")
         self.dict[key] = store
         return store
+
+def inferenceSesion(path, providers= ['CPUExecutionProvider']): 
+    model = rt.InferenceSession(path, providers)
+    input_names = list(input.name for input in model.get_inputs())
+    return (model, input_names)
 
 
 def _unpickle(path):
@@ -100,6 +105,8 @@ else:
         f"Using phantom.faces.estimate_age() may throw an error or not work properly."
     )
 
+_path_age_model_onnx = resource_filename("phantom", "models/age_model_v1.onnx.dat")
+
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
@@ -113,6 +120,9 @@ lazy_vars.register(
 )
 lazy_vars.register(
     "age_model", _unpickle, _path_age_model
+)
+lazy_vars.register(
+    "age_model_onnx", inferenceSesion, _path_age_model_onnx 
 )
 #face_encoder        = dlib.face_recognition_model_v1(_path_encoder)
 lazy_vars.register(
@@ -479,6 +489,15 @@ def compare(face1, face2):
     :return: float, distance between `face1` and `face2`
     """
     return np.linalg.norm(face1 - face2)
+
+def estimate_age_onnx(face): 
+    """
+    Estimates the age of a person based on a facial encoding using ONNX model.
+    :param face: dlibs 128-long face encoding
+    """
+    (age_model, input_names) = lazy_vars.get("age_model_onnx")
+    face = face.reshape(1, -1)
+    return age_model.run(None, {input_names[0]: [face.astype(np.float32)]})
 
 
 def estimate_age(face):
