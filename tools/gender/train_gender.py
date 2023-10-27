@@ -34,8 +34,8 @@ def main():
     X, y = load_data(tagged)
     print("Training sklearn.svm.SVC...")
     t2 = datetime.datetime.now()
-    clf = svm.SVC(kernel="linear", C=6.25, gamma=0.01)
-    clf.fit(X, y)
+    reg = svm.SVR(kernel="linear", C=6.25, gamma=0.01)
+    reg.fit(X, y)
     t3 = datetime.datetime.now()
     print("Done training!")
     print("Exporting to ONNX model...")
@@ -44,12 +44,12 @@ def main():
     print(f'Tamaños de los inputs {n_features}')
     initial_type = [('float_input', FloatTensorType([None, n_features]))]
     onx = convert_sklearn(
-        clf, 
+        reg, 
         initial_types=initial_type,
         target_opset={"": target_opset, "ai.onnx.ml": 1}
     )
     print("Creating ONNX model...")
-    with open("gender_model.onnx", "wb") as f:
+    with open("gender_model.onnx.dat", "wb") as f:
         f.write(onx.SerializeToString())
     t4 = datetime.datetime.now()
     print("Done pickling!")
@@ -57,7 +57,7 @@ def main():
     print(f"\tLoading : {t1 - t0}")
     print(f"\tEncoding: {t2 - t1}")
     print(f"\tTraining: {t3 - t2}")
-    print(f"\tPickling: {t4 - t3}")
+    print(f"\tExporting to ONNIX: {t4 - t3}")
 
 if __name__ == "__main__":
     main()
