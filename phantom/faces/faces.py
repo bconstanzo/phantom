@@ -61,7 +61,7 @@ class _LazyStore:
 
 def inferenceSesion(path, providers= ['CPUExecutionProvider']): 
     # with open(path, "rb") as filehandle:
-    model = rt.InferenceSession(path, providers)
+    model = rt.InferenceSession(path)
     input_names = list(input.name for input in model.get_inputs())
     return (model, input_names)
 
