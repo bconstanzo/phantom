@@ -60,8 +60,9 @@ class _LazyStore:
         return store
 
 def inferenceSesion(path, providers= ['CPUExecutionProvider']): 
-    model = rt.InferenceSession(path, providers)
-    input_names = list(input.name for input in model.get_inputs())
+    with open(path, "rb") as filehandle:
+        model = rt.InferenceSession(filehandle, providers)
+        input_names = list(input.name for input in model.get_inputs())
     return (model, input_names)
 
 
@@ -106,6 +107,7 @@ else:
     )
 
 _path_age_model_onnx = resource_filename("phantom", "models/age_model_v1.onnx.dat")
+_path_gender_model_onnx = resource_filename("phantom", "models/gender_model.onnx.dat")
 
 _path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
 _path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
@@ -128,7 +130,10 @@ lazy_vars.register(
 lazy_vars.register(
     "gender_model", _unpickle, _path_gender
 )
-#gender_model        = _unpickle(_path_gender)
+
+lazy_vars.register(
+    "gender_model_onnx", inferenceSesion, _path_gender_model_onnx 
+)
 lazy_vars.register(
     "shape_predictor_5p", dlib.shape_predictor, _path_shape_5p
 )
@@ -496,7 +501,6 @@ def estimate_age_onnx(face):
     :param face: dlibs 128-long face encoding
     """
     (age_model, input_names) = lazy_vars.get("age_model_onnx")
-    face = face.reshape(1, -1)
     return age_model.run(None, {input_names[0]: [face.astype(np.float32)]})
 
 
@@ -525,3 +529,7 @@ def estimate_gender(face):
     vector = dlib.vector(face)
     gender_model = lazy_vars.get("gender_model")
     return gender_model(vector)
+
+def estimate_gender_onnx(face):
+    (gender_model, input_names) = lazy_vars.get("gender_model_onnx")
+    return gender_model.run(None, {input_names[0]: [face.astype(np.float32)]})

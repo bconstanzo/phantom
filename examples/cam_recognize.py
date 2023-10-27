@@ -5,7 +5,7 @@ import cv2
 
 from phantom.utils import draw_faces
 from phantom.faces import (
-    encode, detect, estimate_age_onnx as estimate_age, estimate_gender, age_tags,
+    encode, detect, estimate_age_onnx as estimate_age, estimate_gender_onnx as estimate_gender, age_tags,
 )
 
 
