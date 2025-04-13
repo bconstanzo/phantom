@@ -13,12 +13,13 @@ from itertools import cycle
 # TODO: think a better place for this function that helps in detecting forgeries
 def jpg_ghosts(img, qualities=[50, 60, 70, 80, 90, 100]):
     """
-    Implements the JPG Ghosts algorithm as described by Hany Farid.
+    Implements the JPG Ghosts algorithm as described by Micah K. Johnson and
+    Hany Farid.
 
-    Writes images to disk in the current location that are different compression
-    levels of the parameter `img` such that you can see the "ghost" of parts
-    where the image shows different JPG compression levels. Read the paper
-    for further details.
+    Saves `img` to memory as JPG using different compression levels set by the 
+    `qualities` parameter such that you get to see the "ghost" of parts where
+    the image shows different JPG compression levels. Read the paper for further
+    details.
 
     :param img: cv2/np.ndarray image
     :param name: base name to save the different compression level images
@@ -26,16 +27,21 @@ def jpg_ghosts(img, qualities=[50, 60, 70, 80, 90, 100]):
         different compression levels that will be saved
     """
     ret = []
+    imgf = img.astype(np.float32)
+    coeff = np.array( [ 1./3, 1./3, 1./3 ], dtype=np.float32).reshape((1, 3))
     for q in qualities:
         aux_bytes = cv2.imencode(".jpg", img, [int(cv2.IMWRITE_JPEG_QUALITY), q])
-        aux_img = cv2.imdecode(aux_bytes[1], -1)
-        diff = img.astype(np.float32) - aux_img
-        diff = np.abs(diff)
-        diff /= diff.max()
-        diff *= 255
-        diff = diff.astype(np.uint8)
-        ret.append(diff)
+        aux_img = cv2.imdecode(aux_bytes[1], -1).astype(np.float32)
+        diff = cv2.absdiff( imgf, aux_img )
+        # diff = np.abs( imgf - aux_img )
+        # print(f"{np.all( diff == dif2)=}")
+        diff = cv2.transform( diff, coeff )
+        # diff = np.sum( diff, axis=-1 ) * 1/3
+        # print(f"{np.allclose(diff, dif2)=}")
+        diff = ( diff / diff.max() ) * 255
+        ret.append( diff.astype(np.uint8) )
     return ret
+
 
 
 def color_correct(base, dest, baselm):
