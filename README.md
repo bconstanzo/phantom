@@ -4,11 +4,14 @@ forensic image processing in python
 ## Requirements
 * Python 3.10.x (3.6.x+ still supported, but recommend latest)
 * NumPy 1.15+
+* NumPy 1.22+ (per ONNX runtime)
 * scipy 1.2.1+
 * matplotlib
 * scikit-learn 1.0+
 * OpenCV 4.5+
 * dlib 19.23+ (19.16 and 19.8 still work)
+* ONNX 1.12+
+* protobuf 3.16.0 (as per ONNX runtime dependency)
 
 ## Installing on Windows
 Since Windows tends to be a bit harder to get things working on, we have
@@ -31,6 +34,7 @@ compiled this instructions to get you going:
     https://github.com/davisking/dlib.
 
 1. You can still download the wheel for dlib 19.8.1 from
+4. You can still download the wheel for dlib 19.8.1 from
    https://pypi.org/simple/dlib/ (thanks to 
    https://github.com/charlielito/install-dlib-python-windows for the pointer).
    __We don't recommend this, and will eventually drop support for older

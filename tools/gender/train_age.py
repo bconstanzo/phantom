@@ -45,9 +45,9 @@ def main():
     clf.fit(X, y)
     t3 = datetime.datetime.now()
     print("Done training!")
-    print("Pickling...")
-    with open("age_model.pickle", "wb") as handle:
-        pickle.dump(clf, handle)
+    # print("Pickling...")
+    # with open("age_model.pickle", "wb") as handle:
+    #     pickle.dump(clf, handle)
     t4 = datetime.datetime.now()
     print("Done pickling!")
     print(f"Times:")
@@ -55,6 +55,12 @@ def main():
     print(f"    Encoding: {t2 - t1}")
     print(f"    Training: {t3 - t2}")
     print(f"    Pickling: {t4 - t3}")
+    return clf, X, y
+    # why have a main that returns things?
+    # glad you asked! so we can run:
+    #     ipython -i train_age.py
+    # and get the data back in the ipython shell for testing ONNX
+    # (or whatever you want to test)
 
 if __name__ == "__main__":
-    main()
+    clf, X_train, y_train = main()

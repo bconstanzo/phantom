@@ -1,7 +1,7 @@
 numpy >= 1.15
 scipy >= 1.2
 matplotlib
-scikit-learn >= 0.20
-opencv-python >= 4.5
+scikit-learn == 1.1
+#opencv-python >= 4.5
 dlib >=19.16.0
 onnxruntime
