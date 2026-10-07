@@ -26,7 +26,7 @@ from matplotlib import pyplot as plt
 # --------------------------------------------------------------------------- #
 # EXAMPLE 1 - Defining the plane manually, and estimating the height
 
-""" # Reading image
+ # Reading image
 img = cv2.imread('shed.jpg')
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -47,10 +47,10 @@ y22 = (208,530,1)
 img = cv2.line(img,(int(y21[0]),int(y21[1])),(int(y22[0]),int(y22[1])),[255,255,0],thickness=2)
 z11 = (544,634,1)
 z12 = (550,235,1)
-img = cv2.line(img,(int(z11[0]),int(z11[1])),(int(z12[0]),int(z12[1])),[255,255,0],thickness=2)
+img = cv2.line(img,(int(z11[0]),int(z11[1])),(int(z12[0]),int(z12[1])),[0,255,255],thickness=2)
 z21 = (409,643,1)
 z22 = (416,327,1)
-img = cv2.line(img,(int(z21[0]),int(z21[1])),(int(z22[0]),int(z22[1])),[255,255,0],thickness=2)
+img = cv2.line(img,(int(z21[0]),int(z21[1])),(int(z22[0]),int(z22[1])),[255,0,255],thickness=2)
 
 # Points in the base and the top of the man. The two points on the top are to
 # find the exact straight vertical line from the base one, according to the 
@@ -69,13 +69,13 @@ img = cv2.line(img,(int(plane[0][0]),int(plane[0][1])),(int(plane[1][0]),int(pla
 plt.title(f'Estimated height: {Height:.2f}cm')
 plt.suptitle('Plane defined manually (real height of the man: 180cm)')
 plt.imshow(img)
-plt.show() """
+plt.show() 
 
 # --------------------------------------------------------------------------- #
 
 # EXAMPLE 2 - Defining the plane manually, and estimating the height
 
-""" # Reading the image
+# Reading the image
 img = cv2.imread('phone.jpg')
 img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
@@ -114,11 +114,11 @@ Height = estimate_height(alfa,plane,top1,top2,base,img)
 plt.title(f'Estimated height: {Height:.2f}cm')
 plt.suptitle('Plane defined manually (real height of the phone: 15)')
 plt.imshow(img)
-plt.show() """
+plt.show() 
 
 # --------------------------------------------------------------------------- #
 
-# EXAMPLE 3 - Automatic detection of plane, and estimation of height
+# # EXAMPLE 3 - Automatic detection of plane, and estimation of height
 
 # Reading image
 img = cv2.imread('shed.jpg')
@@ -126,6 +126,8 @@ img = cv2.imread('shed.jpg')
 # Base, top and height of the reference object
 z11 = (544,634,1)
 z12 = (550,235,1)
+
+
 height = 294.3
 
 # Plane detection and definition

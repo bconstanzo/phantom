@@ -33,12 +33,12 @@ C_LOAD_ATLAS = False
 C_SAVE_ATLAS = True
 
 # ...and variables
-path  = r"C:\Test\infoconf2019\imagenes\fotos_full"
+path  = r"C:\Users\alvar\Info-Lab\PPS-Gauna-Alvarez-In-Fo-Lab\phantom-master\imagenes\fotos_full"
 # path  = r"C:\Test\infoconf2019\imagenes\cluster"  # keeping the other path as a stress-test
 
 procs = 3
 DEBUG_TIMER = True
-output_folder_path = r"C:\Test\infoconf2019\imagenes\cluster"
+output_folder_path = r"C:\Users\alvar\Info-Lab\PPS-Gauna-Alvarez-In-Fo-Lab\phantom-master\imagenes\out"
 
 
 def read_and_find(path):
@@ -181,6 +181,7 @@ def cluster(resultset):
         score = np.mean(grid_scores[label])
         height = out.shape[0]
         ypos = height - 32
+        out = out.astype(np.uint8)
         cv2.putText(out, f"{score:0.3f}", (12, ypos + 2), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 0, 0), 2, cv2.LINE_AA)
         cv2.putText(out, f"{score:0.3f}", (10, ypos), cv2.FONT_HERSHEY_SIMPLEX, 1, (255, 255, 255), 2, cv2.LINE_AA)
         cv2.imwrite(f"{output_folder_path}/grid_{label}.jpg", out)

@@ -27,7 +27,7 @@ import sklearn
 import warnings
 import onnxruntime as rt
 
-from pkg_resources import resource_filename
+from importlib import resources
 from sklearn.cluster import DBSCAN
 from sklearn.neighbors import NearestCentroid
 from sklearn import metrics
@@ -77,40 +77,40 @@ def _unpickle(path):
 
 
 # paths for the model files
-_path_encoder   = resource_filename("phantom", "models/dlib_face_recognition_resnet_model_v1.dat")
+_path_encoder   = str(resources.files("phantom") /  "models/dlib_face_recognition_resnet_model_v1.dat")
 dlib_ver = dlib.__version__
 if dlib_ver.startswith("19.8"):
-    _path_gender    = resource_filename("phantom", "models/phantom_gender_model_v1_dlib_19.8.dat")
+    _path_gender    = str(resources.files("phantom") /  "models/phantom_gender_model_v1_dlib_19.8.dat")
     # TODO: cleanup and maybe retrain under dlib 19.8 or switch to scikit-learn SVM
 elif dlib_ver.startswith("19.16"):
-    _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.dat")
+    _path_gender      = str(resources.files("phantom") /  "models/phantom_gender_model_v1.dat")
 elif dlib_ver.startswith("19.23") or dlib_ver.startswith("19.24"):
-    _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.1.dat")
+    _path_gender      = str(resources.files("phantom") / "models/phantom_gender_model_v1.1.dat")
 else:
     # we load the latest model, but warn that it may not work properly
-    _path_gender      = resource_filename("phantom", "models/phantom_gender_model_v1.1.dat")
+    _path_gender      = str(resources.files("phantom") /  "models/phantom_gender_model_v1.1.dat")
     warnings.warn(
         f"Could not load a gender model that matches the installed dlib version! "
         f"Using phantom.faces.estimate_gender() may throw an error or not work properly."
     )
 
 if sklearn.__version__.startswith("0.20"):
-    _path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.dat")
+    _path_age_model = str(resources.files ("phantom") /  "models/phantom_age_model_v2.dat")
 elif sklearn.__version__.startswith("1.0") or sklearn.__version__.startswith("1.1"):
-    _path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.1.dat")
+    _path_age_model = str(resources.files("phantom") /  "models/phantom_age_model_v2.1.dat")
 else:
     # same as before, load latest model and warn
-    _path_age_model = resource_filename("phantom", "models/phantom_age_model_v2.1.dat")
+    _path_age_model = str(resources.files("phantom") /  "models/phantom_age_model_v2.1.dat")
     warnings.warn(
         f"Could not load an age model that matches the installed sklearn version! "
         f"Using phantom.faces.estimate_age() may throw an error or not work properly."
     )
 
-_path_age_model_onnx = resource_filename("phantom", "models/age_model_v1.onnx.dat")
-_path_gender_model_onnx = resource_filename("phantom", "models/gender_model.onnx.dat")
+_path_age_model_onnx = str(resources.files("phantom") / "models/age_model_v1.onnx.dat")
+_path_gender_model_onnx = str(resources.files("phantom") /  "models/gender_model.onnx.dat")
 
-_path_shape_5p  = resource_filename("phantom", "models/shape_predictor_5_face_landmarks.dat")
-_path_shape_68p = resource_filename("phantom", "models/shape_predictor_68_face_landmarks.dat")
+_path_shape_5p  = str(resources.files("phantom") /  "models/shape_predictor_5_face_landmarks.dat")
+_path_shape_68p = str(resources.files("phantom") / "models/shape_predictor_68_face_landmarks.dat")
 # and we instance the models
 # scrub that -- lazy load them, with a lazy store
 lazy_vars = _LazyStore()
