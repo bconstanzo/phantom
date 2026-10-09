@@ -29,6 +29,7 @@ eggs/
 lib/
 lib64/
 parts/
+test_files/
 sdist/
 var/
 wheels/

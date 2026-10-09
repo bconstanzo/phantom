@@ -185,7 +185,8 @@ def distance_line_point(p1, p2, p3):
     bottom = math.sqrt((a**2)+1)
     d = top/bottom
     return d
-
+# TODO: So, something about the implementation of the detection isn't working 
+# Check the paper Single View Metrology by A. Criminisi, page 3
 def detect_plane(img, obj, height):
     """
     Detects and defines the space on an image and a scale factor 'alfa', based
@@ -214,14 +215,18 @@ def detect_plane(img, obj, height):
 
     original = lines[0]
     horizontal_lines.append(original)
-    p11 = (original[0][0],original[0][1],1)
-    p12 = (original[0][2],original[0][3],1)
+   # p11 = (original[0,0],original[0,1],1)
+   # p12 = (original[0,2],original[0,3],1)
+    p11 = (original[0],original[1],1)
+    p12 = (original[2],original[3],1)
     selected_line = np.cross(p11,p12)
     selected_line = selected_line/selected_line[2]
     calculate_angle((p11, p12), (p11,p12))
     for second_line in lines[1:]:
-        p21 = (second_line[0][0],second_line[0][1],1)
-        p22 = (second_line[0][2],second_line[0][3],1)
+        # p21 = (second_line[0,0],second_line[0,1],1)
+        # p22 = (second_line[0,2],second_line[0,3],1)
+        p21 = (second_line[0],second_line[1],1)
+        p22 = (second_line[2],second_line[3],1)
         comparing_line = np.cross(p21,p22)
         comparing_line = comparing_line/comparing_line[2]
         angle = calculate_angle((p11,p12), (p21,p22))
@@ -235,12 +240,14 @@ def detect_plane(img, obj, height):
     #Calculating the intersection points between all the lines
     points = []
     for i,line in enumerate(horizontal_lines, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
         for second_line in horizontal_lines[i:]:
-            x0, y0, x1, y1 = second_line[0]
+            #x0, y0, x1, y1 = second_line[0]
+            x0, y0, x1, y1 = second_line
             first_point = (x0,y0,1)
             second_point = (x1,y1,1)
             second_line = np.cross(first_point, second_point)
@@ -282,7 +289,8 @@ def detect_plane(img, obj, height):
     # Intersecting every horizontal line with the horizon
     intersection_points = []
     for line in lines:
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         line = np.cross(first_point, second_point)
@@ -308,7 +316,8 @@ def detect_plane(img, obj, height):
     # Divinding the horizontal line in two groups, according with the group 
     # that their intersection point with the horizon line landed
     for line in horizontal_lines:
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         aux = np.cross(first_point, second_point)
@@ -322,12 +331,14 @@ def detect_plane(img, obj, height):
     # Calculating the intersection point between the lines on the X group
     points = []
     for i,line in enumerate(x_lines, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
         for second_line in x_lines[i:]:
-            x0, y0, x1, y1 = second_line[0]
+            #x0, y0, x1, y1 = second_line[0]
+            x0, y0, x1, y1 = second_line
             first_point = (x0,y0,1)
             second_point = (x1,y1,1)
             second_line = np.cross(first_point, second_point)
@@ -343,10 +354,12 @@ def detect_plane(img, obj, height):
     x_lines_filtered = []
     x_distances = []
     for line in x_lines:
-        p1 = (line[0][0],line[0][1])
-        p2 = (line[0][2],line[0][3])
+        #p1 = (line[0][0],line[0][1])
+        #p2 = (line[0][2],line[0][3])
+        p1 = (line[0],line[1])
+        p2 = (line[2],line[3])
         p3 = mean
-        d = distance_line_point(p1,p2,p3)
+         d = distance_line_point(p1,p2,p3)
         x_distances.append(d)
 
     # If the distance between the line and that point is too far, the line is 
@@ -359,12 +372,14 @@ def detect_plane(img, obj, height):
     # Calculating the intersection point between the lines on the Y group
     points = []
     for i,line in enumerate(y_lines, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
         for second_line in y_lines[i:]:
-            x0, y0, x1, y1 = second_line[0]
+            #x0, y0, x1, y1 = second_line[0]
+            x0, y0, x1, y1 = second_line
             first_point = (x0,y0,1)
             second_point = (x1,y1,1)
             second_line = np.cross(first_point, second_point)
@@ -399,7 +414,8 @@ def detect_plane(img, obj, height):
     # a better estimation of the horizon
     points = []
     for i,line in enumerate(y_lines_filtered, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
@@ -431,12 +447,14 @@ def detect_plane(img, obj, height):
     # a better estimation of the horizon
     points = []
     for i,line in enumerate(x_lines_filtered, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
         for second_line in x_lines_filtered[i:]:
-            x0, y0, x1, y1 = second_line[0]
+            #x0, y0, x1, y1 = second_line[0]
+            x0, y0, x1, y1 = second_line
             first_point = (x0,y0,1)
             second_point = (x1,y1,1)
             second_line = np.cross(first_point, second_point)
@@ -463,12 +481,14 @@ def detect_plane(img, obj, height):
     # but for the vertical (Z) one
     points = []
     for i,line in enumerate(vertical_lines, start=1):
-        x0, y0, x1, y1 = line[0]
+        #x0, y0, x1, y1 = line[0]
+        x0, y0, x1, y1 = line
         first_point = (x0,y0,1)
         second_point = (x1,y1,1)
         first_line = np.cross(first_point, second_point)
         for second_line in vertical_lines[i:]:
-            x0, y0, x1, y1 = second_line[0]
+            #x0, y0, x1, y1 = second_line[0]
+            x0, y0, x1, y1 = second_line
             first_point = (x0,y0,1)
             second_point = (x1,y1,1)
             second_line = np.cross(first_point, second_point)
