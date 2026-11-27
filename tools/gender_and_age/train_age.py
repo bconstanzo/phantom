@@ -2,17 +2,24 @@ import numpy as np
 import cv2
 import datetime
 import phantom
-import pickle
 
+from skl2onnx import to_onnx
 
 from common import load_tagged, TaggedFace
 from sklearn import svm, metrics
 
 
 PATH_TAGGED = "tagged_faces.csv"
+PATH_MODEL = "age_model.onnx.dat"
 
 
 def load_data(tagged):
+    """Build the (features, labels) matrices that sklearn expects.
+
+    Faces are reduced to Phantom encodings so the classifier trains on
+    compact embeddings instead of raw pixels, and the exported ONNX input
+    size does not depend on image resolution.
+    """
     X = []
     y = []
     for t in tagged:
@@ -25,6 +32,13 @@ def load_data(tagged):
 
 
 def main():
+    """Train the age classifier and export it as an ONNX file.
+
+    ONNX lets Phantom run inference without sklearn or the training-time
+    Python version. Returns the model and data so they can be inspected
+    from an interactive session (`ipython -i train_age.py`), e.g. to
+    compare sklearn vs ONNX predictions.
+    """
     print(f"Using phantom {phantom.__version__}")
     print("Loading tagged data...")
     t0 = datetime.datetime.now()
@@ -45,22 +59,26 @@ def main():
     clf.fit(X, y)
     t3 = datetime.datetime.now()
     print("Done training!")
-    # print("Pickling...")
-    # with open("age_model.pickle", "wb") as handle:
-    #     pickle.dump(clf, handle)
+    print("Exporting to ONNX model...")
+    # zipmap=False makes the scores a plain tensor instead of a list of
+    # dicts, which is far easier to consume from onnxruntime.
+    # X is cast to float32 because that is what ONNX runtimes expect.
+    onx = to_onnx(
+        clf,
+        X[:1].astype(np.float32),
+        options={id(clf): {"zipmap": False}},
+    )
+    with open(PATH_MODEL, "wb") as f:
+        f.write(onx.SerializeToString())
     t4 = datetime.datetime.now()
-    print("Done pickling!")
-    print(f"Times:")
+    print("Done exporting!")
+    print("Times:")
     print(f"    Loading : {t1 - t0}")
     print(f"    Encoding: {t2 - t1}")
     print(f"    Training: {t3 - t2}")
-    print(f"    Pickling: {t4 - t3}")
+    print(f"    Exporting to ONNX: {t4 - t3}")
     return clf, X, y
-    # why have a main that returns things?
-    # glad you asked! so we can run:
-    #     ipython -i train_age.py
-    # and get the data back in the ipython shell for testing ONNX
-    # (or whatever you want to test)
+
 
 if __name__ == "__main__":
     clf, X_train, y_train = main()

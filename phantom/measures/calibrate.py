@@ -13,7 +13,7 @@ def find_distortion(img, nx, ny):
     :param nx: number of inside corners in x 
     :param ny: number of inside corners in y
     :return: objpoints[List] of 3D points in real world space and 
-        imgpoints[List] of 2D points in image plane
+    imgpoints[List] of 2D points in image plane
     """
     objpoints = [] # 3D points in real world space
     imgpoints = [] # 2D points in image plane
@@ -61,7 +61,7 @@ def calibrate(img, img_chess_board, nx, ny):
     :param nx: number of inside corners in x 
     :param ny: number of inside corners in y
     :return: Undistorted image. If the chess board wasn't found,
-        it returns the origina image (img)
+        it returns the original image (img)
     """
     imgpoints, objpoints = find_distortion(img_chess_board, nx, ny)
     if imgpoints:

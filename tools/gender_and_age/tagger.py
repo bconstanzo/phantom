@@ -26,11 +26,11 @@ from PIL import Image, ImageDraw, ImageFont
 
 
 # Here be ~dragons~ the part where you can tweak configs
-FLAG_TAG     = False
-FLAG_SAVE    = False
-FLAG_TRAIN   = True
+FLAG_TAG     = True
+FLAG_SAVE    = True
+FLAG_TRAIN   = False
 FLAG_TEST    = False
-PATH_TRAIN   = "d:/Test/dlib_faces_5points/sub_faces"
+PATH_TRAIN   = "diversidad"
 PATH_TAGFILE = "./tagged_faces.csv"
 PATH_SVMFILE = "./model.pickle"
 PATH_TEST    = ""  # point to a directory were you can easily check!
@@ -65,7 +65,7 @@ def tag():
     """
     Show images from a path waiting for user input to tag them.
 
-    We're keeping only the images were dlibs HOG face detector picks up only one
+    We're only keeping the images where dlibs HOG face detector picks up a single
     face. Using dlibs 5 point face landmark dataset a balanced female/male ratio
     is found at about ~600 images. We also skip images were landmarking goes
     wrong, as they can negatively affect the result of facial encoding.

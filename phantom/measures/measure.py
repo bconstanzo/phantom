@@ -359,7 +359,7 @@ def detect_plane(img, obj, height):
         p1 = (line[0],line[1])
         p2 = (line[2],line[3])
         p3 = mean
-         d = distance_line_point(p1,p2,p3)
+        d = distance_line_point(p1,p2,p3)
         x_distances.append(d)
 
     # If the distance between the line and that point is too far, the line is 
